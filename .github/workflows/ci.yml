@@ -145,4 +145,4 @@ jobs:
           - Commit: ${{ github.sha }}
           - Branch: ${{ github.ref }}
         draft: false
-        prerelease: false 
+        prerelease: false
