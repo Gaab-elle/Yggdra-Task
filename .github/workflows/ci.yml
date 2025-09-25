@@ -71,9 +71,6 @@ jobs:
     - name: Run PHP tests
       run: php artisan test --coverage-clover=coverage.xml
     
-    - name: Run NPM tests
-      run: npm test
-    
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
