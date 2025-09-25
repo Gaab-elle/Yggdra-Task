@@ -168,3 +168,15 @@ bootstrap/cache/*
 *~
 .DS_Store
 Thumbs.db
+# Environment files
+.env
+.env.*
+
+# Backup files
+*.backup
+*.bak
+
+# Documentation with secrets
+*_SETUP.md
+*_CHECKLIST.md
+*_ENV_*.md
