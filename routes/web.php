@@ -66,6 +66,11 @@ Route::group([
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+        // Configurações
+        Route::get('/settings', function () {
+            return Inertia::render('Settings/Index');
+        })->name('settings.index');
+
         // Tarefas
         Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
         Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
@@ -149,3 +154,7 @@ Route::get('/test-notify', function () {
     $user->notify(new TestBroadcastNotification());
     return 'Notificação de teste enviada para usuário: ' . $user->name . ' (ID: ' . $user->id . ')';
 })->middleware('auth');
+
+// Rotas para login com Google
+Route::get('auth/google', [App\Http\Controllers\Auth\GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'handleGoogleCallback']);

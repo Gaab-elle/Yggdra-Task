@@ -6,6 +6,8 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import QuickTaskModal from '@/Components/QuickTaskModal.vue';
 import HolidaySnackbar from '@/Components/HolidaySnackbar.vue';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
+import ThemeToggle from '@/Components/ThemeToggle.vue';
+import Sidebar from '@/Components/Sidebar.vue';
 import OnlineUsersFAB from '../components/OnlineUsersFAB.vue';
 import BeautifulNotificationCenter from '../components/BeautifulNotificationCenter.vue';
 import ToastContainer from '../components/BeautifulToastContainer.vue';
@@ -33,6 +35,7 @@ const { routeL, t } = useLocale();
 
 const showingNavigationDropdown = ref(false);
 const showUserMenu = ref(false);
+const showSidebar = ref(false);
 const searchQuery = ref('');
 const showFabMenu = ref(false);
 const showQuickTaskModal = ref(false);
@@ -52,25 +55,18 @@ const toggleSidebar = () => {
     showingNavigationDropdown.value = !showingNavigationDropdown.value;
 };
 
+const toggleMainSidebar = () => {
+    showSidebar.value = !showSidebar.value;
+};
+
+const closeSidebar = () => {
+    showSidebar.value = false;
+};
+
 const toggleUserMenu = () => {
     showUserMenu.value = !showUserMenu.value;
 };
 
-// Dark mode toggle
-const isDark = vueRef(false);
-const applyThemeClass = () => {
-    const root = document.documentElement;
-    if (isDark.value) root.classList.add('dark'); else root.classList.remove('dark');
-};
-const toggleDark = () => {
-    isDark.value = !isDark.value;
-    localStorage.setItem('theme:dark', isDark.value ? '1' : '0');
-    applyThemeClass();
-};
-vueOnMounted(() => {
-    isDark.value = localStorage.getItem('theme:dark') === '1';
-    applyThemeClass();
-});
 
 const logout = async () => {
     try {
@@ -654,21 +650,24 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#1f2937]">
+    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <!-- Sidebar -->
+        <Sidebar :is-open="showSidebar" @close="closeSidebar" />
+        
         <!-- Toolbar Principal Adaptada -->
-        <div class="bg-white shadow-lg">
+        <div class="bg-white dark:bg-gray-800 shadow-lg">
             <!-- Toolbar com Gradiente -->
-            <div class="relative h-20 bg-gradient-to-r from-slate-800 to-cyan-600">
+            <div class="relative h-20 bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-slate-800 dark:to-cyan-600">
 
                 <!-- Background Pattern -->
-                <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+                <div class="absolute inset-0 bg-white bg-opacity-20 dark:bg-black dark:bg-opacity-10"></div>
                 
                 <!-- Toolbar Content -->
-                <div class="relative flex items-center justify-between h-full px-6">
+                <div class="relative flex items-center h-full px-6">
                     <!-- Left Side -->
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-4 flex-shrink-0">
                         <!-- Menu Button -->
-                        <button @click="toggleSidebar" 
+                        <button @click="toggleMainSidebar" 
                                 class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-md transition-all duration-200">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -677,28 +676,28 @@ onUnmounted(() => {
 
                         <!-- Logo e Título -->
                         <div class="flex items-center space-x-3">
-                            <div class="text-white">
-                                <h1 class="text-xl font-bold">TaskForce</h1>
-                                <p class="text-blue-100 text-xs">{{ t('navbar.subtitle') }}</p>
+                            <div class="text-white dark:text-white">
+                                <h1 class="text-xl font-bold">YggdraTask</h1>
+                                <p class="text-blue-100 dark:text-blue-100 text-xs">{{ t('navbar.subtitle') }}</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Center: Search Bar -->
-                    <div class="flex-1 max-w-lg mx-8 hidden lg:block">
-                        <div class="relative">
+                    <div class="flex-1 flex justify-center px-8">
+                        <div class="relative w-full max-w-md">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="h-5 w-5 text-gray-500 dark:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
                             <input type="text" 
                                    :placeholder="t('navbar.search_ph')" 
-                                   class="block w-full pl-10 pr-12 py-2 border border-blue-300 rounded-md leading-5 bg-white bg-opacity-20 text-white placeholder-blue-200 focus:outline-none focus:bg-white focus:text-gray-900 focus:border-white transition-all duration-200 backdrop-blur-sm"
+                                   class="block w-full pl-10 pr-12 py-2 border border-blue-300 dark:border-blue-300 rounded-md leading-5 bg-white bg-opacity-80 dark:bg-white dark:bg-opacity-20 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 focus:outline-none focus:bg-white dark:focus:bg-white focus:text-gray-900 dark:focus:text-gray-900 focus:border-white dark:focus:border-white transition-all duration-200 backdrop-blur-sm"
                                    v-model="searchQuery"
                                    @keydown="handleSearchKeydown">
                             <button @click="performSearch" 
-                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-200 hover:text-white transition-colors">
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-blue-200 hover:text-gray-700 dark:hover:text-white transition-colors">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -707,25 +706,7 @@ onUnmounted(() => {
                     </div>
 
                     <!-- Right Side -->
-                    <div class="flex items-center space-x-3">
-                        <!-- Navigation Links -->
-                        <div class="hidden md:flex items-center space-x-2">
-                            <Link :href="routeL('dashboard')" 
-                                  class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
-                                  :class="$page.url.startsWith('/dashboard') ? 'bg-white bg-opacity-20' : ''">
-                                Dashboard
-                            </Link>
-                            <Link :href="routeL('tasks.index')" 
-                                  class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
-                                  :class="$page.url.startsWith('/tasks') ? 'bg-white bg-opacity-20' : ''">
-                                {{ t('navbar.tasks') }}
-                            </Link>
-                            <Link :href="routeL('reports.index')" 
-                                  class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
-                                  :class="$page.url.startsWith('/reports') ? 'bg-white bg-opacity-20' : ''">
-                                {{ t('navbar.reports') }}
-                            </Link>
-                        </div>
+                    <div class="flex items-center space-x-3 flex-shrink-0">
 
                         <!-- Action Buttons -->
                         <div class="flex items-center space-x-2">
@@ -733,17 +714,12 @@ onUnmounted(() => {
                             <LanguageSelector />
 
                             <!-- Dark mode toggle -->
-                            <button @click="toggleDark"
-                                class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-md transition-all duration-200 backdrop-blur-sm"
-                                :title="isDark ? 'Light' : 'Dark'">
-                                <svg v-if="!isDark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M12 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 16a4 4 0 100-8 4 4 0 000 8zm8-5a1 1 0 100-2h-2a1 1 0 100 2h2zM6 12a1 1 0 100-2H4a1 1 0 100 2h2zm11.657-6.657a1 1 0 010 1.414L16.414 8.0a1 1 0 11-1.414-1.414l1.243-1.243a1 1 0 011.414 0zM9 16.414a1 1 0 10-1.414-1.414L6.343 16.243A1 1 0 107.757 17.657L9 16.414zM17.657 16.243a1 1 0 10-1.414 1.414l1.243 1.243a1 1 0 001.414-1.414l-1.243-1.243zM7.757 7.343A1 1 0 106.343 5.929L5.1 7.171A1 1 0 106.514 8.586l1.243-1.243z"/></svg>
-                                <svg v-else xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/></svg>
-                            </button>
+                            <ThemeToggle />
 
                             <!-- Create Task Button -->
                             <button 
                                 @click="router.get(routeL('tasks.create'))"
-                                class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm"
+                                class="bg-white bg-opacity-80 dark:bg-white dark:bg-opacity-20 hover:bg-opacity-90 dark:hover:bg-opacity-30 text-gray-900 dark:text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 backdrop-blur-sm"
                             >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -764,26 +740,26 @@ onUnmounted(() => {
                             <!-- User Menu -->
                             <div class="relative user-menu-dropdown">
                                 <button @click="toggleUserMenu" 
-                                        class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-md transition-all duration-200 backdrop-blur-sm flex items-center space-x-2">
-                                    <div class="w-8 h-8 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        class="bg-white bg-opacity-80 dark:bg-white dark:bg-opacity-20 hover:bg-opacity-90 dark:hover:bg-opacity-30 text-gray-900 dark:text-white p-2 rounded-md transition-all duration-200 backdrop-blur-sm flex items-center space-x-2">
+                                    <div class="w-8 h-8 bg-white bg-opacity-60 dark:bg-white dark:bg-opacity-30 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                         </svg>
                                     </div>
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 text-gray-700 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                     </svg>
                                 </button>
 
                                 <!-- User Dropdown Menu -->
                                 <div v-if="showUserMenu" 
-                                     class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                     class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
                                     <Link :href="routeL('profile.edit')" 
-                                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                          class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                         {{ t('navbar.profile') }}
                                     </Link>
                                     <button @click="logout" 
-                                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                         {{ t('navbar.logout') }}
                                     </button>
                                 </div>
@@ -797,26 +773,33 @@ onUnmounted(() => {
 
         <!-- Mobile Navigation Menu -->
         <div v-if="showingNavigationDropdown" 
-             class="md:hidden bg-white border-b border-gray-200">
+             class="md:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <!-- Mobile Search Bar -->
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" 
+                           :placeholder="t('navbar.search_ph')" 
+                           class="block w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                           v-model="searchQuery"
+                           @keydown="handleSearchKeydown">
+                    <button @click="performSearch" 
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
             <div class="px-4 py-2 space-y-1">
-                <Link :href="routeL('dashboard')" 
-                      class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                      :class="$page.url.startsWith('/dashboard') ? 'bg-gray-100 text-gray-900' : ''">
-                    Dashboard
-                </Link>
-                <Link :href="routeL('tasks.index')" 
-                      class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                      :class="$page.url.startsWith('/tasks') ? 'bg-gray-100 text-gray-900' : ''">
-                    Tarefas
-                </Link>
-                <Link :href="routeL('reports.index')" 
-                      class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                      :class="$page.url.startsWith('/reports') ? 'bg-gray-100 text-gray-900' : ''">
-                    Relatórios
-                </Link>
                 <Link :href="routeL('profile.edit')" 
-                      class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                      :class="$page.url.startsWith('/profile') ? 'bg-gray-100 text-gray-900' : ''">
+                      class="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                      :class="$page.url.startsWith('/profile') ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white' : ''">
                     Perfil
                 </Link>
             </div>
@@ -851,8 +834,8 @@ onUnmounted(() => {
             <div v-if="showFabMenu" class="absolute bottom-20 right-0 space-y-3 z-[9999]">
                 <!-- Botão Nova Tarefa -->
                 <div class="flex items-center">
-                    <div class="bg-white rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap">
-                        <span class="text-sm font-medium text-gray-700">{{ t('fab.new_task') }}</span>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('fab.new_task') }}</span>
                     </div>
                     <button
                         @click="openNewTaskModal"
@@ -866,8 +849,8 @@ onUnmounted(() => {
 
                 <!-- Botão Nova Tarefa Rápida -->
                 <div class="flex items-center">
-                    <div class="bg-white rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap">
-                        <span class="text-sm font-medium text-gray-700">{{ t('fab.quick_task') }}</span>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('fab.quick_task') }}</span>
                     </div>
                     <button
                         @click="openQuickTaskModal"
@@ -881,8 +864,8 @@ onUnmounted(() => {
 
                 <!-- Botão Ir para Tarefas -->
                 <div class="flex items-center">
-                    <div class="bg-white rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap">
-                        <span class="text-sm font-medium text-gray-700">{{ t('fab.view_tasks') }}</span>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg px-4 py-2 mr-3 whitespace-nowrap border border-gray-200 dark:border-gray-600">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('fab.view_tasks') }}</span>
                     </div>
                     <button
                         @click="goToTasks"

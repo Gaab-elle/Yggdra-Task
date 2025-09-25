@@ -29,10 +29,10 @@ const firstName = (user.name || '').split(' ')[0] || user.name;
                     {{ (firstName || 'U')[0] }}
                 </div>
                 <div>
-                    <h2 class="text-2xl font-semibold leading-tight text-gray-800">
-                        BEM VINDO {{ firstName }} — SEU PERFIL
+                    <h2 class="text-2xl font-semibold leading-tight text-gray-900 dark:text-white">
+                        SEU PERFIL
                     </h2>
-                    <p class="text-sm text-gray-500">{{ user.email }}</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-500">{{ user.email }}</p>
                 </div>
             </div>
         </template>
@@ -40,7 +40,7 @@ const firstName = (user.name || '').split(' ')[0] || user.name;
         <div class="py-12">
             <div class="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="bg-white dark:bg-gray-800 p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
@@ -50,13 +50,13 @@ const firstName = (user.name || '').split(' ')[0] || user.name;
                 </div>
 
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="bg-white dark:bg-gray-800 p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="bg-white dark:bg-gray-800 p-4 shadow sm:rounded-lg sm:p-8"
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>

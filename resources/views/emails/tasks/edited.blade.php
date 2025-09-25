@@ -187,7 +187,7 @@
         </div>
 
         <div class="footer">
-            <p>Este é um email automático do sistema TaskForce.</p>
+            <p>Este é um email automático do sistema YggdraTask.</p>
             <p>Se você não esperava receber este email, pode ignorá-lo com segurança.</p>
         </div>
     </div>

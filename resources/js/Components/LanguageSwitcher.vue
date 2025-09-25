@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center space-x-2">
-    <span class="text-sm text-gray-600">{{ t('language.select') }}:</span>
+    <span class="text-sm text-gray-600 dark:text-gray-400">{{ t('language.select') }}:</span>
     <select
       v-model="selectedLanguage"
       @change="switchLanguage"

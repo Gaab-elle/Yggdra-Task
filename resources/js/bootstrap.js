@@ -32,60 +32,100 @@ console.log('🔧 Variáveis de ambiente Reverb:', {
 if (!reverbKey) {
     console.warn('⚠️ VITE_REVERB_APP_KEY não está configurado. WebSockets não funcionarão.');
     console.warn('📝 Configure no arquivo .env: VITE_REVERB_APP_KEY=local');
+    // Criar um Echo mock para evitar erros
+    window.Echo = {
+        private: () => ({
+            listen: () => ({ notification: () => {} }),
+            notification: () => {}
+        }),
+        join: () => ({
+            here: () => {},
+            joining: () => {},
+            leaving: () => {},
+            error: () => {},
+            subscribed: () => {}
+        }),
+        leave: () => {},
+        disconnect: () => {},
+        connector: { pusher: { connection: { state: 'disconnected' } } }
+    };
 } else {
-    console.log('✅ Reverb configurado:', { key: reverbKey, host: reverbHost, port: reverbPort });
-    
-    window.Echo = new Echo({
-        broadcaster: 'reverb',
-        key: reverbKey,
-        wsHost: reverbHost,
-        wsPort: reverbPort,
-        wssPort: reverbPort,
-        forceTLS: reverbScheme === 'https',
-        enabledTransports: ['ws', 'wss'],
-        authEndpoint: '/broadcasting/auth',
-        authorizer: (channel, options) => {
-            return {
-                authorize: (socketId, callback) => {
-                    // Usar apenas autenticação via CSRF token (sessão web)
-                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-                    
-                    console.log('🔐 Autenticando canal:', channel.name);
-                    console.log('🔑 CSRF Token:', csrfToken ? 'Presente' : 'Ausente');
-                    
-                    if (!csrfToken) {
-                        console.error('❌ CSRF Token não encontrado');
-                        callback(new Error('CSRF Token não encontrado'));
-                        return;
-                    }
-                    
-                    // Headers para autenticação via sessão (Web)
-                    const headers = {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    };
-                    
-                    axios.post('/broadcasting/auth', {
-                        socket_id: socketId,
-                        channel_name: channel.name
-                    }, { headers })
-                    .then(response => {
-                        console.log('✅ Canal autenticado com sucesso:', channel.name);
-                        callback(null, response.data);
-                    })
-                    .catch(error => {
-                        console.error('❌ Erro na autenticação do canal:', error);
-                        console.error('📊 Detalhes do erro:', {
-                            status: error.response?.status,
-                            message: error.response?.data?.message || error.message,
-                            channel: channel.name,
-                            headers: headers
+    try {
+        console.log('✅ Reverb configurado:', { key: reverbKey, host: reverbHost, port: reverbPort });
+        
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: reverbKey,
+            wsHost: reverbHost,
+            wsPort: reverbPort,
+            wssPort: reverbPort,
+            forceTLS: reverbScheme === 'https',
+            enabledTransports: ['ws', 'wss'],
+            authEndpoint: '/broadcasting/auth',
+            authorizer: (channel, options) => {
+                return {
+                    authorize: (socketId, callback) => {
+                        // Usar apenas autenticação via CSRF token (sessão web)
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                        
+                        console.log('🔐 Autenticando canal:', channel.name);
+                        console.log('🔑 CSRF Token:', csrfToken ? 'Presente' : 'Ausente');
+                        
+                        if (!csrfToken) {
+                            console.error('❌ CSRF Token não encontrado');
+                            callback(new Error('CSRF Token não encontrado'));
+                            return;
+                        }
+                        
+                        // Headers para autenticação via sessão (Web)
+                        const headers = {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        };
+                        
+                        axios.post('/broadcasting/auth', {
+                            socket_id: socketId,
+                            channel_name: channel.name
+                        }, { headers })
+                        .then(response => {
+                            console.log('✅ Canal autenticado com sucesso:', channel.name);
+                            callback(null, response.data);
+                        })
+                        .catch(error => {
+                            console.error('❌ Erro na autenticação do canal:', error);
+                            console.error('📊 Detalhes do erro:', {
+                                status: error.response?.status,
+                                message: error.response?.data?.message || error.message,
+                                channel: channel.name,
+                                headers: headers
+                            });
+                            callback(error);
                         });
-                        callback(error);
-                    });
-                }
-            };
-        }
-    });
+                    }
+                };
+            }
+        });
+        
+        console.log('✅ Echo inicializado com sucesso');
+    } catch (error) {
+        console.error('❌ Erro ao inicializar Echo:', error);
+        // Criar um Echo mock em caso de erro
+        window.Echo = {
+            private: () => ({
+                listen: () => ({ notification: () => {} }),
+                notification: () => {}
+            }),
+            join: () => ({
+                here: () => {},
+                joining: () => {},
+                leaving: () => {},
+                error: () => {},
+                subscribed: () => {}
+            }),
+            leave: () => {},
+            disconnect: () => {},
+            connector: { pusher: { connection: { state: 'disconnected' } } }
+        };
+    }
 }

@@ -305,13 +305,13 @@ function getCategoryDisplayName(category) {
 
           <!-- atalhos -->
           <div class="flex items-center gap-2 mb-2">
-            <button type="button" class="px-2 py-1 text-xs rounded bg-gray-100 hover:bg-gray-200" @click="setQuickDue(0)">
+            <button type="button" class="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 text-white border border-white/20" @click="setQuickDue(0)">
               {{ t('quick.today') }}
             </button>
-            <button type="button" class="px-2 py-1 text-xs rounded bg-gray-100 hover:bg-gray-200" @click="setQuickDue(1)">
+            <button type="button" class="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 text-white border border-white/20" @click="setQuickDue(1)">
               {{ t('quick.tomorrow') }}
             </button>
-            <button type="button" class="px-2 py-1 text-xs rounded bg-gray-100 hover:bg-gray-200" @click="setQuickDue(7)">
+            <button type="button" class="px-2 py-1 text-xs rounded bg-white/10 hover:bg-white/20 text-white border border-white/20" @click="setQuickDue(7)">
               {{ t('quick.next_week') }}
             </button>
           </div>

@@ -1,20 +1,17 @@
 <template>
     <AuthenticatedLayout>
       <template #header>
-        <h2 class="font-semibold text-2xl text-800 text-white leading-tight">
-          {{ t('reports.title') }}
-        </h2>
       </template>
   
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <!-- Toolbar -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="relative h-32 bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg">
               <div class="absolute inset-0 bg-black bg-opacity-20"></div>
   
               <div class="relative flex items-center justify-between h-full px-6">
-                <div class="text-white">
+                <div class="text-gray-900 dark:text-white">
                   <h1 class="text-2xl font-bold">{{ t('reports.header') }}</h1>
                   <p class="text-blue-100 text-sm">{{ t('reports.subtitle') }}</p>
                 </div>
@@ -22,7 +19,7 @@
                 <div class="flex items-center space-x-3">
                   <button
                     @click="refreshData"
-                    class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-md transition-all duration-200 backdrop-blur-sm"
+                    class="bg-white bg-opacity-20 hover:bg-opacity-30 text-gray-900 dark:text-white p-2 rounded-md transition-all duration-200 backdrop-blur-sm"
                     :class="{ 'animate-spin': isRefreshing }"
                     :title="t('common.refresh')"
                   >
@@ -36,7 +33,7 @@
             </div>
   
             <div class="px-6 py-3 bg-slate-800/30 border-t border-white/10">
-              <div class="flex items-center justify-between text-sm text-slate-300">
+              <div class="flex items-center justify-between text-sm text-gray-600 dark:text-slate-300">
                 <div class="flex items-center space-x-4">
                   <span class="flex items-center space-x-1">
                     <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,25 +63,25 @@
           </div>
   
           <!-- Estatísticas -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.overview') }}</h3>
+              <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.overview') }}</h3>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="text-center p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                   <div class="text-2xl font-bold text-blue-400">{{ stats.total_tasks }}</div>
-                  <div class="text-sm text-slate-300">{{ t('reports.total_tasks') }}</div>
+                  <div class="text-sm text-gray-600 dark:text-slate-300">{{ t('reports.total_tasks') }}</div>
                 </div>
                 <div class="text-center p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                   <div class="text-2xl font-bold text-green-400">{{ stats.completed_tasks }}</div>
-                  <div class="text-sm text-slate-300">{{ t('reports.completed') }}</div>
+                  <div class="text-sm text-gray-600 dark:text-slate-300">{{ t('reports.completed') }}</div>
                 </div>
                 <div class="text-center p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                   <div class="text-2xl font-bold text-yellow-400">{{ stats.productivity_rate }}%</div>
-                  <div class="text-sm text-slate-300">{{ t('reports.productivity_rate') }}</div>
+                  <div class="text-sm text-gray-600 dark:text-slate-300">{{ t('reports.productivity_rate') }}</div>
                 </div>
                 <div class="text-center p-4 bg-purple-500/10 border border-purple-500/20 rounded-lg">
                   <div class="text-2xl font-bold text-purple-400">{{ stats.avg_completion_time }}d</div>
-                  <div class="text-sm text-slate-300">{{ t('reports.avg_time') }}</div>
+                  <div class="text-sm text-gray-600 dark:text-slate-300">{{ t('reports.avg_time') }}</div>
                 </div>
               </div>
             </div>
@@ -92,18 +89,18 @@
   
           <!-- Gráficos -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
               <div class="p-6">
-                <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.productivity_30d') }}</h3>
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.productivity_30d') }}</h3>
                 <div class="h-64">
                   <canvas ref="productivityChart"></canvas>
                 </div>
               </div>
             </div>
   
-            <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
               <div class="p-6">
-                <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.by_status') }}</h3>
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.by_status') }}</h3>
                 <div class="h-64">
                   <canvas ref="statusChart"></canvas>
                 </div>
@@ -112,28 +109,28 @@
           </div>
   
           <!-- Tempo de conclusão -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.completion_time') }}</h3>
+              <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.completion_time') }}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <canvas ref="completionTimeChart"></canvas>
                 </div>
                 <div class="space-y-4">
-                  <div class="flex justify-between items-center p-3 bg-slate-800/30 border border-white/10 rounded-lg">
-                    <span class="font-medium text-white">{{ t('reports.avg') }}</span>
+                  <div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-slate-800/30 border border-gray-200 dark:border-white/10 rounded-lg">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.avg') }}</span>
                     <span class="text-blue-400 font-bold">{{ completionTimeData.average }} {{ t('common.days') }}</span>
                   </div>
-                  <div class="flex justify-between items-center p-3 bg-slate-800/30 border border-white/10 rounded-lg">
-                    <span class="font-medium text-white">{{ t('reports.median') }}</span>
+                  <div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-slate-800/30 border border-gray-200 dark:border-white/10 rounded-lg">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.median') }}</span>
                     <span class="text-green-400 font-bold">{{ completionTimeData.median }} {{ t('common.days') }}</span>
                   </div>
-                  <div class="flex justify-between items-center p-3 bg-slate-800/30 border border-white/10 rounded-lg">
-                    <span class="font-medium text-white">{{ t('reports.fastest') }}</span>
+                  <div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-slate-800/30 border border-gray-200 dark:border-white/10 rounded-lg">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.fastest') }}</span>
                     <span class="text-purple-400 font-bold">{{ completionTimeData.fastest }} {{ t('common.days') }}</span>
                   </div>
-                  <div class="flex justify-between items-center p-3 bg-slate-800/30 border border-white/10 rounded-lg">
-                    <span class="font-medium text-white">{{ t('reports.slowest') }}</span>
+                  <div class="flex justify-between items-center p-3 bg-gray-100 dark:bg-slate-800/30 border border-gray-200 dark:border-white/10 rounded-lg">
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.slowest') }}</span>
                     <span class="text-red-400 font-bold">{{ completionTimeData.slowest }} {{ t('common.days') }}</span>
                   </div>
                 </div>
@@ -143,33 +140,33 @@
   
           <!-- Semanal / Mensal -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
               <div class="p-6">
-                <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.weekly') }}</h3>
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.weekly') }}</h3>
                 <div class="space-y-4">
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.period') }}</span>
-                    <span class="text-slate-300">{{ weeklyReport.period }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.period') }}</span>
+                    <span class="text-gray-600 dark:text-slate-300">{{ weeklyReport.period }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.total_tasks') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.total_tasks') }}</span>
                     <span class="text-blue-400 font-bold">{{ weeklyReport.total_tasks }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.completed') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.completed') }}</span>
                     <span class="text-green-400 font-bold">{{ weeklyReport.completed_tasks }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.completion_rate') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.completion_rate') }}</span>
                     <span class="text-purple-400 font-bold">{{ weeklyReport.completion_rate }}%</span>
                   </div>
                 </div>
   
                 <div class="mt-4">
-                  <h4 class="font-medium mb-2 text-white">{{ t('reports.daily_activity') }}</h4>
+                  <h4 class="font-medium mb-2 text-gray-900 dark:text-white">{{ t('reports.daily_activity') }}</h4>
                   <div class="space-y-2">
                     <div v-for="day in weeklyReport.daily_activity" :key="day.day" class="flex justify-between items-center text-sm">
-                      <span class="font-medium text-white">{{ day.day }}</span>
+                      <span class="font-medium text-gray-900 dark:text-white">{{ day.day }}</span>
                       <div class="flex gap-4">
                         <span class="text-blue-400">{{ day.created }} {{ t('reports.created') }}</span>
                         <span class="text-green-400">{{ day.completed }} {{ t('reports.completed') }}</span>
@@ -181,34 +178,34 @@
               </div>
             </div>
   
-            <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
               <div class="p-6">
-                <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.monthly') }}</h3>
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.monthly') }}</h3>
                 <div class="space-y-4">
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.period') }}</span>
-                    <span class="text-slate-300">{{ monthlyReport.period }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.period') }}</span>
+                    <span class="text-gray-600 dark:text-slate-300">{{ monthlyReport.period }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.total_tasks') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.total_tasks') }}</span>
                     <span class="text-blue-400 font-bold">{{ monthlyReport.total_tasks }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.completed') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.completed') }}</span>
                     <span class="text-green-400 font-bold">{{ monthlyReport.completed_tasks }}</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.completion_rate') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.completion_rate') }}</span>
                     <span class="text-purple-400 font-bold">{{ monthlyReport.completion_rate }}%</span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.growth') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.growth') }}</span>
                     <span :class="monthlyReport.growth_from_last_month >= 0 ? 'text-green-400' : 'text-red-400'" class="font-bold">
                       {{ monthlyReport.growth_from_last_month >= 0 ? '+' : '' }}{{ monthlyReport.growth_from_last_month }}%
                     </span>
                   </div>
                   <div class="flex justify-between items-center">
-                    <span class="font-medium text-white">{{ t('reports.avg_per_day') }}</span>
+                    <span class="font-medium text-gray-900 dark:text-white">{{ t('reports.avg_per_day') }}</span>
                     <span class="text-orange-400 font-bold">{{ monthlyReport.avg_tasks_per_day }}</span>
                   </div>
                 </div>
@@ -217,11 +214,11 @@
           </div>
   
           <!-- Atividades -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-              <h3 class="text-lg font-semibold mb-4 text-white">{{ t('reports.activity_history') }}</h3>
+              <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{{ t('reports.activity_history') }}</h3>
 
-              <div v-if="recentActivities.length === 0" class="text-slate-400 text-center py-8">
+              <div v-if="recentActivities.length === 0" class="text-gray-500 dark:text-slate-400 text-center py-8">
                 {{ t('reports.no_activity') }}
               </div>
 
@@ -229,7 +226,7 @@
                 <div v-for="activity in recentActivities" :key="activity.id" class="flex items-start gap-4 p-4 border border-white/10 rounded-lg hover:bg-white/5 transition bg-slate-800/30">
                   <div class="flex-shrink-0">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center" :class="getActivityBgColor(activity.action)">
-                      <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-4 h-4 text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path v-if="activity.action_icon === 'plus-circle'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         <path v-else-if="activity.action_icon === 'edit'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -252,11 +249,11 @@
   
                   <div class="flex-1">
                     <div class="flex items-center gap-2 mb-1">
-                      <span class="font-medium text-white" :class="activity.action_color">{{ activity.action_label }}</span>
-                      <span v-if="activity.task_title" class="text-slate-300">- {{ activity.task_title }}</span>
+                      <span class="font-medium text-gray-900 dark:text-white" :class="activity.action_color">{{ activity.action_label }}</span>
+                      <span v-if="activity.task_title" class="text-gray-600 dark:text-slate-300">- {{ activity.task_title }}</span>
                     </div>
-                    <p class="text-sm text-slate-300">{{ activity.description }}</p>
-                    <p class="text-xs text-slate-400 mt-1">{{ activity.time_ago }}</p>
+                    <p class="text-sm text-gray-600 dark:text-slate-300">{{ activity.description }}</p>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">{{ activity.time_ago }}</p>
                   </div>
                 </div>
               </div>

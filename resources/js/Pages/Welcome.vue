@@ -9,12 +9,12 @@
       </div>
       
       <!-- Watermark de logo ao fundo -->
-      <img src="/logoyggdra.png" alt="Logo Watermark" 
+      <img src="/img/logo.png" alt="Logo Watermark" 
            class="pointer-events-none select-none absolute inset-0 m-auto w-[60rem] max-w-[92vw] opacity-[0.08] blur-[1px] z-0" />
 
       <div class="relative z-10 max-w-xl w-full mx-auto p-10 bg-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl ring-1 ring-white/10">
         <div class="text-center mb-8 flex flex-col items-center">
-          <img src="/logoyggdra.png" alt="TaskForce" class="h-40 sm:h-48 md:h-56 w-auto mb-4 drop-shadow-[0_12px_40px_rgba(124,58,237,0.65)]" />
+          <img src="/img/logo.png" alt="YggdraTask" class="h-40 sm:h-48 md:h-56 w-auto mb-4 drop-shadow-[0_12px_40px_rgba(124,58,237,0.65)]" />
           <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mt-1 mb-3">{{ t('app.title') }}</h1>
           <p class="text-slate-300 max-w-md">{{ t('app.subtitle') }}</p>
         </div>

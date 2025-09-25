@@ -1,7 +1,7 @@
 <template>
     <AuthenticatedLayout>
       <template #header>
-        <h2 class="font-semibold text-xl text-00 text-white leading-tight">
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
           {{ t('tasks.my_tasks') }}
         </h2>
       </template>
@@ -9,13 +9,13 @@
       <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <!-- Toolbar -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
               <div class="flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-4">
                   <button
                     @click="backup"
-                    class="bg-gradient-to-r from-[#1d4ed8] via-[#7c3aed] to-[#9333ea] text-white px-4 py-2 rounded-md hover:from-[#2563eb] hover:via-[#8b5cf6] hover:to-[#a855f7] transition flex items-center gap-2"
+                    class="bg-gradient-to-r from-[#1d4ed8] via-[#7c3aed] to-[#9333ea] text-gray-900 dark:text-white px-4 py-2 rounded-md hover:from-[#2563eb] hover:via-[#8b5cf6] hover:to-[#a855f7] transition flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -26,7 +26,7 @@
   
                   <button
                     @click="showRestoreModal = true"
-                    class="bg-white/10 border border-white/10 text-white px-4 py-2 rounded-md hover:bg-white/20 transition flex items-center gap-2"
+                    class="bg-white/10 border border-white/10 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-white/20 transition flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -37,7 +37,7 @@
   
                   <button
                     @click="showDeleteAllModal = true"
-                    class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition flex items-center gap-2"
+                    class="bg-red-600 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-red-700 transition flex items-center gap-2"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,14 +53,14 @@
           </div>
   
           <!-- Search & Filters -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
               <div class="flex flex-wrap gap-4 items-center">
                 <!-- Search -->
                 <div class="flex-1 min-w-64">
                   <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
@@ -69,14 +69,14 @@
                       type="text"
                       v-model="searchQuery"
                       :placeholder="t('tasks.search_placeholder')"
-                      class="block w-full pl-10 pr-4 py-2 rounded-md leading-5 bg-white/10 text-white placeholder-slate-300 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed] transition-all duration-200">
+                      class="block w-full pl-10 pr-4 py-2 rounded-md leading-5 bg-white dark:bg-white/10 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-300 border border-gray-300 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed] transition-all duration-200">
                   </div>
                 </div>
   
                 <!-- Filters -->
                 <div class="flex gap-3">
                   <select v-model="statusFilter"
-                    class="px-3 py-2 border border-white/10 rounded-md bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
+                    class="px-3 py-2 border border-gray-300 dark:border-white/10 rounded-md bg-white dark:bg-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
                     <option value="">{{ t('filters.all_status') }}</option>
                     <option value="pending">{{ t('status.pending') }}</option>
                     <option value="in_progress">{{ t('status.in_progress') }}</option>
@@ -84,7 +84,7 @@
                   </select>
   
                   <select v-model="priorityFilter"
-                    class="px-3 py-2 border border-white/10 rounded-md bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
+                    class="px-3 py-2 border border-gray-300 dark:border-white/10 rounded-md bg-white dark:bg-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
                     <option value="">{{ t('filters.all_priorities') }}</option>
                     <option value="low">{{ t('priority.low') }}</option>
                     <option value="medium">{{ t('priority.medium') }}</option>
@@ -92,7 +92,7 @@
                   </select>
   
                   <select v-model="categoryFilter"
-                    class="px-3 py-2 border border-white/10 rounded-md bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
+                    class="px-3 py-2 border border-gray-300 dark:border-white/10 rounded-md bg-white dark:bg-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7c3aed] focus:border-[#7c3aed]">
                     <option value="">{{ t('filters.all_categories') }}</option>
                     <option value="Work">{{ t('categories.work') }}</option>
                     <option value="Personal">{{ t('categories.personal') }}</option>
@@ -102,7 +102,7 @@
                   </select>
   
                   <button @click="clearFilters"
-                    class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition flex items-center gap-2">
+                    class="px-4 py-2 bg-gray-500 text-gray-900 dark:text-white rounded-md hover:bg-gray-600 transition flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M6 18L18 6M6 6l12 12" />
@@ -114,7 +114,7 @@
   
               <!-- Search result badge -->
               <div v-if="searchQuery || statusFilter || priorityFilter || categoryFilter"
-                class="mt-4 p-3 bg-white/5 border border-white/10 rounded-md text-white">
+                class="mt-4 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-md text-gray-900 dark:text-white">
                 <div class="flex items-center justify-between">
                   <div class="text-sm text-blue-800">
                     <span class="font-medium">{{ filteredTasks.length }}</span>
@@ -132,16 +132,16 @@
           </div>
   
           <!-- Kanban -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
             <div class="p-6">
               <h3 class="text-lg font-semibold mb-4">{{ t('tasks.organize') }}</h3>
-              <p class="text-sm text-slate-300 mb-6">{{ t('tasks.drag_help') }}</p>
+              <p class="text-sm text-gray-600 dark:text-slate-300 mb-6">{{ t('tasks.drag_help') }}</p>
   
               <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Pending -->
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 kanban-column">
+                <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4 kanban-column">
                   <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-semibold text-white flex items-center">
+                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                       <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
                       {{ t('status.pending') }}
                       <span class="ml-2 bg-yellow-500/20 text-yellow-300 text-xs font-medium px-2 py-1 rounded-full">
@@ -149,7 +149,7 @@
                       </span>
                     </h4>
                     <button @click="showCreateModal = true"
-                      class="text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+                      class="text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white p-1 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -172,9 +172,9 @@
                     @end="onDragEnd"
                   >
                     <template #item="{ element: task }">
-                      <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-yellow-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
+                      <div class="bg-gray-100 dark:bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-yellow-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
                         <div class="flex items-start justify-between mb-2">
-                      <h5 class="font-semibold text-white text-sm">{{ task.title }}</h5>
+                      <h5 class="font-semibold text-gray-900 dark:text-white text-sm">{{ task.title }}</h5>
                           <div class="flex items-center space-x-1">
                             <span class="text-xs px-2 py-1 rounded-full" :class="getPriorityClass(task.priority)">
                               {{ getPriorityLabel(task.priority) }}
@@ -182,11 +182,11 @@
                           </div>
                         </div>
   
-                        <p v-if="task.description" class="text-slate-300 text-xs mb-3 line-clamp-2">
+                        <p v-if="task.description" class="text-gray-600 dark:text-slate-300 text-xs mb-3 line-clamp-2">
                           {{ task.description }}
                         </p>
   
-                        <div class="flex items-center justify-between text-xs text-slate-300">
+                        <div class="flex items-center justify-between text-xs text-gray-600 dark:text-slate-300">
                           <div class="flex items-center space-x-2">
                             <span v-if="task.due_date" class="flex items-center">
                               <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,9 +218,9 @@
                 </div>
   
                 <!-- In progress -->
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 kanban-column">
+                <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4 kanban-column">
                   <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-semibold text-white flex items-center">
+                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                       <div class="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
                       {{ t('status.in_progress') }}
                       <span class="ml-2 bg-orange-500/20 text-orange-300 text-xs font-medium px-2 py-1 rounded-full">
@@ -228,7 +228,7 @@
                       </span>
                     </h4>
                     <button @click="showCreateModal = true"
-                      class="text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+                      class="text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white p-1 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -251,9 +251,9 @@
                     @end="onDragEnd"
                   >
                     <template #item="{ element: task }">
-                      <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-orange-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
+                      <div class="bg-gray-100 dark:bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-orange-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
                         <div class="flex items-start justify-between mb-2">
-                      <h5 class="font-semibold text-white text-sm">{{ task.title }}</h5>
+                      <h5 class="font-semibold text-gray-900 dark:text-white text-sm">{{ task.title }}</h5>
                           <div class="flex items-center space-x-1">
                             <span class="text-xs px-2 py-1 rounded-full" :class="getPriorityClass(task.priority)">
                               {{ getPriorityLabel(task.priority) }}
@@ -261,11 +261,11 @@
                           </div>
                         </div>
   
-                        <p v-if="task.description" class="text-slate-300 text-xs mb-3 line-clamp-2">
+                        <p v-if="task.description" class="text-gray-600 dark:text-slate-300 text-xs mb-3 line-clamp-2">
                           {{ task.description }}
                         </p>
   
-                        <div class="flex items-center justify-between text-xs text-slate-300">
+                        <div class="flex items-center justify-between text-xs text-gray-600 dark:text-slate-300">
                           <div class="flex items-center space-x-2">
                             <span v-if="task.due_date" class="flex items-center">
                               <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,9 +297,9 @@
                 </div>
   
                 <!-- Completed -->
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 kanban-column">
+                <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4 kanban-column">
                   <div class="flex items-center justify-between mb-4">
-                    <h4 class="text-lg font-semibold text-white flex items-center">
+                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                       <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                       {{ t('status.completed') }}
                       <span class="ml-2 bg-green-500/20 text-green-300 text-xs font-medium px-2 py-1 rounded-full">
@@ -307,7 +307,7 @@
                       </span>
                     </h4>
                     <button @click="showCreateModal = true"
-                      class="text-slate-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+                      class="text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white p-1 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -330,9 +330,9 @@
                     @end="onDragEnd"
                   >
                     <template #item="{ element: task }">
-                      <div class="bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-green-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
+                      <div class="bg-gray-100 dark:bg-slate-800/50 backdrop-blur-sm p-4 rounded-lg shadow-sm border-l-4 border-green-400 hover:shadow-md transition-shadow cursor-move task-card" :data-task-id="task.id">
                         <div class="flex items-start justify-between mb-2">
-                      <h5 class="font-semibold text-white text-sm">{{ task.title }}</h5>
+                      <h5 class="font-semibold text-gray-900 dark:text-white text-sm">{{ task.title }}</h5>
                           <div class="flex items-center space-x-1">
                             <span class="text-xs px-2 py-1 rounded-full" :class="getPriorityClass(task.priority)">
                               {{ getPriorityLabel(task.priority) }}
@@ -340,11 +340,11 @@
                           </div>
                         </div>
   
-                        <p v-if="task.description" class="text-slate-300 text-xs mb-3 line-clamp-2">
+                        <p v-if="task.description" class="text-gray-600 dark:text-slate-300 text-xs mb-3 line-clamp-2">
                           {{ task.description }}
                         </p>
   
-                        <div class="flex items-center justify-between text-xs text-slate-300">
+                        <div class="flex items-center justify-between text-xs text-gray-600 dark:text-slate-300">
                           <div class="flex items-center space-x-2">
                             <span v-if="task.due_date" class="flex items-center">
                               <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -379,11 +379,11 @@
           </div>
   
           <!-- Task list -->
-          <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
+          <div class="bg-white dark:bg-white/10 backdrop-blur border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
               <h3 class="text-lg font-semibold mb-4">{{ t('tasks.list_title') }}</h3>
   
-              <div v-if="tasks.length === 0" class="text-slate-300 text-center py-8">
+              <div v-if="tasks.length === 0" class="text-gray-600 dark:text-slate-300 text-center py-8">
                 {{ t('tasks.none_found') }}
               </div>
   
@@ -391,7 +391,7 @@
                 <div
                   v-for="task in tasks"
                   :key="task.id"
-                  class="border border-white/10 rounded-lg p-4 hover:shadow-md transition bg-white/5 text-white"
+                  class="border border-white/10 rounded-lg p-4 hover:shadow-md transition bg-white/5 text-gray-900 dark:text-white"
                   :class="{
                     'border-green-400 bg-green-500/10': task.status === 'completed',
                     'border-yellow-400 bg-yellow-500/10': task.status === 'in_progress',
@@ -403,7 +403,7 @@
                   <div class="flex justify-between items-start">
                     <div class="flex-1">
                       <h4 class="font-semibold text-lg">{{ task.title }}</h4>
-                      <p class="text-slate-300 mt-1">{{ task.description }}</p>
+                      <p class="text-gray-600 dark:text-slate-300 mt-1">{{ task.description }}</p>
   
                       <div class="flex gap-4 mt-3 text-sm">
                         <span class="flex items-center gap-1">
@@ -427,7 +427,7 @@
                         </span>
                       </div>
   
-                      <div class="mt-2 text-sm text-slate-300">
+                      <div class="mt-2 text-sm text-gray-600 dark:text-slate-300">
                         {{ t('tasks.created_by') }}: {{ task.creator?.name || t('tasks.you') }}
                         <span v-if="task.assignee">
                           | {{ t('tasks.assigned_to') }}: {{ task.assignee.name }}
@@ -467,10 +467,10 @@
                   />
                 </div>
                 <div class="flex justify-end gap-2">
-                  <button type="button" @click="showRestoreModal = false" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+                  <button type="button" @click="showRestoreModal = false" class="bg-gray-500 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
                     {{ t('common.cancel') }}
                   </button>
-                  <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition">
+                  <button type="submit" class="bg-purple-600 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-purple-700 transition">
                     {{ t('tasks.restore') }}
                   </button>
                 </div>
@@ -520,7 +520,7 @@
   
               <div class="flex justify-end gap-3">
                 <button type="button" @click="showDeleteAllModal = false"
-                  class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition flex items-center gap-2">
+                  class="bg-gray-500 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-gray-600 transition flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M6 18L18 6M6 6l12 12" />
@@ -528,7 +528,7 @@
                   {{ t('common.cancel') }}
                 </button>
                 <button type="button" @click="deleteAllTasks"
-                  class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition flex items-center gap-2">
+                  class="bg-red-600 text-gray-900 dark:text-white px-4 py-2 rounded-md hover:bg-red-700 transition flex items-center gap-2">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -640,11 +640,11 @@
   
   const getStatusClass = (status) => {
     const classes = {
-      pending: 'text-gray-600',
-      in_progress: 'text-yellow-600',
-      completed: 'text-green-600'
+      pending: 'text-gray-700 dark:text-gray-600',
+      in_progress: 'text-yellow-700 dark:text-yellow-600',
+      completed: 'text-green-700 dark:text-green-600'
     }
-    return classes[status] || 'text-gray-600'
+    return classes[status] || 'text-gray-700 dark:text-gray-600'
   }
 
   const getStatusLabel = (status) => {
@@ -658,11 +658,11 @@
 
   const getPriorityClass = (priority) => {
     const classes = {
-      low: 'bg-green-100 text-green-800',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-red-100 text-red-800'
+      low: 'bg-green-200 dark:bg-green-100 text-green-800 dark:text-green-800',
+      medium: 'bg-yellow-200 dark:bg-yellow-100 text-yellow-800 dark:text-yellow-800',
+      high: 'bg-red-200 dark:bg-red-100 text-red-800 dark:text-red-800'
     }
-    return classes[priority] || 'bg-gray-100 text-gray-800'
+    return classes[priority] || 'bg-gray-200 dark:bg-gray-100 text-gray-800 dark:text-gray-800'
   }
 
   const getPriorityLabel = (priority) => {
@@ -689,11 +689,11 @@
   }
   
   const getDueStatusColor = (task) => {
-    if (task.status === 'completed') return 'text-green-600'
-    if (isOverdue(task)) return 'text-red-600'
-    if (isDueToday(task)) return 'text-orange-600'
-    if (isDueSoon(task)) return 'text-yellow-600'
-    return 'text-gray-600'
+    if (task.status === 'completed') return 'text-green-700 dark:text-green-600'
+    if (isOverdue(task)) return 'text-red-700 dark:text-red-600'
+    if (isDueToday(task)) return 'text-orange-700 dark:text-orange-600'
+    if (isDueSoon(task)) return 'text-yellow-700 dark:text-yellow-600'
+    return 'text-gray-700 dark:text-gray-600'
   }
   
   const getDueStatusLabel = (task) => {

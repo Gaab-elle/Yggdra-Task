@@ -29,9 +29,59 @@ const messages: Record<Locale, Record<string, string>> = {
     // Common
     'common.refresh': 'Refresh',
     'common.days': 'days',
+    'common.save': 'Save',
+    'common.cancel': 'Cancel',
+    'common.name': 'Name',
+    'common.email': 'Email',
+    'common.password': 'Password',
+    'common.current_password': 'Current Password',
+    'common.new_password': 'New Password',
+    'common.confirm_password': 'Confirm Password',
+    
+    // Profile
+    'profile.information': 'Profile Information',
+    'profile.information_description': 'Update your account\'s profile information and email address.',
+    'profile.update_password': 'Update Password',
+    'profile.password_description': 'Ensure your account is using a long, random password to stay secure.',
+    'profile.delete_account': 'Delete Account',
+    'profile.delete_description': 'Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.',
+    
+    // Settings
+    'settings.title': 'Settings',
+    'settings.general': 'General',
+    'settings.language': 'Language',
+    'settings.theme': 'Theme',
+    'settings.light_theme': 'Light',
+    'settings.dark_theme': 'Dark',
+    'settings.auto_theme': 'Auto',
+    'settings.enable_notifications': 'Enable Notifications',
+    'settings.email_notifications': 'Email Notifications',
+    'settings.tasks': 'Tasks',
+    'settings.tasks_per_page': 'Tasks per Page',
+    'settings.auto_reminders': 'Auto Reminders',
+    'settings.default_sort': 'Default Sort',
+    'settings.sort_created': 'Created Date',
+    'settings.sort_due_date': 'Due Date',
+    'settings.sort_priority': 'Priority',
+    'settings.sort_title': 'Title',
+    'settings.privacy': 'Privacy',
+    'settings.public_profile': 'Public Profile',
+    'settings.share_stats': 'Share Statistics',
+    'settings.usage_data': 'Usage Data',
+    'settings.system': 'System',
+    'settings.timezone': 'Timezone',
+    'settings.date_format': 'Date Format',
+    'settings.time_format': 'Time Format',
+    'settings.24_hour': '24 Hour',
+    'settings.12_hour': '12 Hour',
+    'settings.save': 'Save',
+    'settings.saving': 'Saving...',
+    'settings.reset': 'Reset',
+    'settings.confirm_reset': 'Are you sure you want to reset all settings to default?',
 
     // Dashboard
     'dashboard.title': 'Dashboard - Metrics & KPIs',
+    'dashboard.welcome_message': 'Welcome {{name}} — To Your Task Manager',
     'dashboard.week_productivity': 'Weekly Productivity',
     'dashboard.productivity_streak': 'Productivity Streak',
     'dashboard.overdue_tasks': 'Overdue Tasks',
@@ -187,7 +237,6 @@ const messages: Record<Locale, Record<string, string>> = {
     'tasks.delete': 'Delete',
     'tasks.restore_backup': 'Restore Backup',
     'tasks.select_backup_file': 'Select the backup file (.json)',
-    'common.cancel': 'Cancel',
     'common.attention': 'Attention!',
     'tasks.cannot_undo': 'This action cannot be undone',
     'tasks.delete_all_warn1': 'All tasks will be permanently deleted',
@@ -311,9 +360,59 @@ const messages: Record<Locale, Record<string, string>> = {
     // Common
     'common.refresh': 'Recarregar',
     'common.days': 'dias',
+    'common.save': 'Salvar',
+    'common.cancel': 'Cancelar',
+    'common.name': 'Nome',
+    'common.email': 'E-mail',
+    'common.password': 'Senha',
+    'common.current_password': 'Senha Atual',
+    'common.new_password': 'Nova Senha',
+    'common.confirm_password': 'Confirmar Senha',
+    
+    // Profile
+    'profile.information': 'Informações do Perfil',
+    'profile.information_description': 'Atualize as informações do perfil e endereço de e-mail da sua conta.',
+    'profile.update_password': 'Atualizar Senha',
+    'profile.password_description': 'Certifique-se de que sua conta está usando uma senha longa e aleatória para manter a segurança.',
+    'profile.delete_account': 'Excluir Conta',
+    'profile.delete_description': 'Uma vez que sua conta for excluída, todos os seus recursos e dados serão permanentemente excluídos. Antes de excluir sua conta, baixe todos os dados ou informações que deseja manter.',
+    
+    // Settings
+    'settings.title': 'Configurações',
+    'settings.general': 'Geral',
+    'settings.language': 'Idioma',
+    'settings.theme': 'Tema',
+    'settings.light_theme': 'Claro',
+    'settings.dark_theme': 'Escuro',
+    'settings.auto_theme': 'Automático',
+    'settings.enable_notifications': 'Ativar Notificações',
+    'settings.email_notifications': 'Notificações por Email',
+    'settings.tasks': 'Tarefas',
+    'settings.tasks_per_page': 'Tarefas por Página',
+    'settings.auto_reminders': 'Lembretes Automáticos',
+    'settings.default_sort': 'Ordenação Padrão',
+    'settings.sort_created': 'Data de Criação',
+    'settings.sort_due_date': 'Data de Vencimento',
+    'settings.sort_priority': 'Prioridade',
+    'settings.sort_title': 'Título',
+    'settings.privacy': 'Privacidade',
+    'settings.public_profile': 'Perfil Público',
+    'settings.share_stats': 'Compartilhar Estatísticas',
+    'settings.usage_data': 'Dados de Uso',
+    'settings.system': 'Sistema',
+    'settings.timezone': 'Fuso Horário',
+    'settings.date_format': 'Formato de Data',
+    'settings.time_format': 'Formato de Hora',
+    'settings.24_hour': '24 Horas',
+    'settings.12_hour': '12 Horas',
+    'settings.save': 'Salvar',
+    'settings.saving': 'Salvando...',
+    'settings.reset': 'Redefinir',
+    'settings.confirm_reset': 'Tem certeza que deseja redefinir todas as configurações para o padrão?',
 
     // Dashboard
     'dashboard.title': 'Dashboard - Métricas e KPIs',
+    'dashboard.welcome_message': 'Bem Vindo {{name}} — Ao Seu Gerenciador de Tarefas',
     'dashboard.week_productivity': 'Produtividade Semanal',
     'dashboard.productivity_streak': 'Streak de Produtividade',
     'dashboard.overdue_tasks': 'Tarefas em Atraso',
@@ -469,7 +568,6 @@ const messages: Record<Locale, Record<string, string>> = {
     'tasks.delete': 'Excluir',
     'tasks.restore_backup': 'Restaurar Backup',
     'tasks.select_backup_file': 'Selecione o arquivo de backup (.json)',
-    'common.cancel': 'Cancelar',
     'common.attention': 'Atenção!',
     'tasks.cannot_undo': 'Esta ação não pode ser desfeita',
     'tasks.delete_all_warn1': 'Todas as tarefas serão excluídas permanentemente',
@@ -593,9 +691,59 @@ const messages: Record<Locale, Record<string, string>> = {
     // Common
     'common.refresh': 'Actualizar',
     'common.days': 'días',
+    'common.save': 'Guardar',
+    'common.cancel': 'Cancelar',
+    'common.name': 'Nombre',
+    'common.email': 'Correo',
+    'common.password': 'Contraseña',
+    'common.current_password': 'Contraseña Actual',
+    'common.new_password': 'Nueva Contraseña',
+    'common.confirm_password': 'Confirmar Contraseña',
+    
+    // Profile
+    'profile.information': 'Información del Perfil',
+    'profile.information_description': 'Actualiza la información del perfil y dirección de correo de tu cuenta.',
+    'profile.update_password': 'Actualizar Contraseña',
+    'profile.password_description': 'Asegúrate de que tu cuenta esté usando una contraseña larga y aleatoria para mantener la seguridad.',
+    'profile.delete_account': 'Eliminar Cuenta',
+    'profile.delete_description': 'Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente eliminados. Antes de eliminar tu cuenta, descarga cualquier dato o información que desees conservar.',
+    
+    // Settings
+    'settings.title': 'Configuración',
+    'settings.general': 'General',
+    'settings.language': 'Idioma',
+    'settings.theme': 'Tema',
+    'settings.light_theme': 'Claro',
+    'settings.dark_theme': 'Oscuro',
+    'settings.auto_theme': 'Automático',
+    'settings.enable_notifications': 'Activar Notificaciones',
+    'settings.email_notifications': 'Notificaciones por Email',
+    'settings.tasks': 'Tareas',
+    'settings.tasks_per_page': 'Tareas por Página',
+    'settings.auto_reminders': 'Recordatorios Automáticos',
+    'settings.default_sort': 'Ordenación por Defecto',
+    'settings.sort_created': 'Fecha de Creación',
+    'settings.sort_due_date': 'Fecha de Vencimiento',
+    'settings.sort_priority': 'Prioridad',
+    'settings.sort_title': 'Título',
+    'settings.privacy': 'Privacidad',
+    'settings.public_profile': 'Perfil Público',
+    'settings.share_stats': 'Compartir Estadísticas',
+    'settings.usage_data': 'Datos de Uso',
+    'settings.system': 'Sistema',
+    'settings.timezone': 'Zona Horaria',
+    'settings.date_format': 'Formato de Fecha',
+    'settings.time_format': 'Formato de Hora',
+    'settings.24_hour': '24 Horas',
+    'settings.12_hour': '12 Horas',
+    'settings.save': 'Guardar',
+    'settings.saving': 'Guardando...',
+    'settings.reset': 'Restablecer',
+    'settings.confirm_reset': '¿Estás seguro de que quieres restablecer todas las configuraciones al predeterminado?',
 
     // Dashboard
     'dashboard.title': 'Panel - Métricas y KPIs',
+    'dashboard.welcome_message': 'Bienvenido {{name}} — A Tu Administrador de Tareas',
     'dashboard.week_productivity': 'Productividad Semanal',
     'dashboard.productivity_streak': 'Racha de Productividad',
     'dashboard.overdue_tasks': 'Tareas Vencidas',
@@ -751,7 +899,6 @@ const messages: Record<Locale, Record<string, string>> = {
     'tasks.delete': 'Eliminar',
     'tasks.restore_backup': 'Restaurar Respaldo',
     'tasks.select_backup_file': 'Selecciona el archivo de respaldo (.json)',
-    'common.cancel': 'Cancelar',
     'common.attention': '¡Atención!',
     'tasks.cannot_undo': 'Esta acción no se puede deshacer',
     'tasks.delete_all_warn1': 'Todas las tareas serán eliminadas permanentemente',
@@ -856,7 +1003,17 @@ export function useLocale() {
   const page = usePage()
   const locale = (page.props.__LOCALE__ as Locale) || 'pt'
 
-  const t = (key: string): string => messages[locale][key] ?? key
+  const t = (key: string, params?: Record<string, any>): string => {
+    let message = messages[locale][key] ?? key
+    
+    if (params) {
+      Object.keys(params).forEach(param => {
+        message = message.replace(new RegExp(`{{${param}}}`, 'g'), params[param])
+      })
+    }
+    
+    return message
+  }
 
   const formatDate = (date: string | number | Date): string => {
     const loc = locale === 'pt' ? 'pt-BR' : locale === 'es' ? 'es-ES' : 'en-US'
@@ -868,7 +1025,8 @@ export function useLocale() {
   }
 
   const routeL = (name: string, params: Record<string, any> = {}, absolute?: boolean, config?: any) => {
-    return route(name, { locale, ...params }, absolute, config)
+    // @ts-ignore
+    return window.route(name, { locale, ...params }, absolute, config)
   }
 
   // Adicionar suporte para currentLocale e switchLocale

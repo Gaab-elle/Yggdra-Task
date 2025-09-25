@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Estilos para elementos select em ambos os modos */
+@layer components {
+  /* Modo escuro */
+  .dark select {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .dark select option {
+    background-color: #1f2937 !important;
+    color: white !important;
+  }
+  
+  .dark select:focus {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+  }
+
+  /* Modo claro */
+  select:not(.dark select) {
+    background-color: white !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+  }
+  
+  select:not(.dark select) option {
+    background-color: white !important;
+    color: #374151 !important;
+  }
+  
+  select:not(.dark select):focus {
+    background-color: white !important;
+    color: #374151 !important;
+  }
+}

@@ -13,9 +13,9 @@
             <!-- Header -->
             <tr>
               <td align="center" bgcolor="#4f46e5" style="padding:24px;color:#ffffff;">
-                            <!-- Título TaskForce -->
+                            <!-- Título YggdraTask -->
             <div style="margin-bottom:16px;">
-              <div style="font-size:24px;font-weight:700;color:#ffffff;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">TASKFORCE</div>
+              <div style="font-size:24px;font-weight:700;color:#ffffff;text-shadow:1px 1px 2px rgba(0,0,0,0.3);">YGGDRATASK</div>
             </div>
                 <h1 style="margin:0;font-size:22px;font-weight:600;">🎯 Nova Tarefa Criada</h1>
               </td>

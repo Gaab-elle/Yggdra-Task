@@ -3,69 +3,57 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Socialite;
 use App\Models\User;
-use App\Notifications\UserLoginNotification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Http\RedirectResponse;
 
 class GoogleController extends Controller
 {
-    public function redirect(): RedirectResponse
+    public function redirectToGoogle()
     {
-        return Socialite::driver('google')
-            ->scopes(['openid','profile','email'])
-            ->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
-    public function callback(): RedirectResponse
+    public function handleGoogleCallback()
     {
         try {
-            // pega dados do Google (state é verificado via sessão)
-            $googleUser = Socialite::driver('google')->stateless(false)->user();
-
-            $user = User::updateOrCreate(
-                ['email' => $googleUser->getEmail()],
-                [
-                    'name' => $googleUser->getName() ?: $googleUser->getNickname(),
-                    'google_id' => $googleUser->getId(),
-                    'password' => bcrypt(str()->random(32)),
-                    'email_verified_at' => now(),
-                ]
-            );
-
-            Auth::login($user, remember: true);
-
-            // Enviar notificação de login por email
-            try {
-                $ipAddress = request()->ip();
-                $userAgent = request()->userAgent();
-                
-                $user->notify(new UserLoginNotification($user, $ipAddress, $userAgent));
-                
-                Log::info('📧 Notificação de login via Google enviada com sucesso', [
-                    'user_id' => $user->id,
-                    'user_email' => $user->email,
-                    'ip_address' => $ipAddress
-                ]);
-                
-            } catch (\Exception $e) {
-                Log::error('❌ Erro ao enviar notificação de login via Google', [
-                    'user_id' => $user->id,
-                    'error' => $e->getMessage()
-                ]);
-            }
-
-            return redirect()->intended('/pt/dashboard');
-        } catch (\Exception $e) {
-            \Log::error('Erro no callback do Google', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine()
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            
+            \Log::info('Google User Data:', [
+                'id' => $googleUser->getId(),
+                'email' => $googleUser->getEmail(),
+                'name' => $googleUser->getName()
             ]);
             
-            return redirect('/pt/login')->withErrors(['google_error' => 'Erro na autenticação com Google.']);
+            $user = User::firstOrCreate(
+                ['email' => $googleUser->getEmail()],
+                [
+                    'name' => $googleUser->getName(),
+                    'google_id' => $googleUser->getId(),
+                    'password' => bcrypt(uniqid())
+                ]
+            );
+            
+            \Log::info('User created/found:', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'google_id' => $user->google_id
+            ]);
+            
+            Auth::login($user);
+            
+            \Log::info('Auth check after login:', [
+                'is_authenticated' => Auth::check(),
+                'user_id' => Auth::id()
+            ]);
+            
+            return redirect()->intended('/pt/dashboard');
+        } catch (\Exception $e) {
+            \Log::error('Google Auth Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect('/login')->withErrors(['msg' => 'Erro ao autenticar com Google: ' . $e->getMessage()]);
         }
     }
 }

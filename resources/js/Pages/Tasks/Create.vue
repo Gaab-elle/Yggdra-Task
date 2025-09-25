@@ -258,83 +258,83 @@ function clearForm() {
   <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
     <div class="bg-white/10 backdrop-blur border border-white/10 text-white overflow-hidden shadow-sm sm:rounded-lg">
       <div class="p-8">
-        <h1 class="text-2xl font-bold mb-6 text-white">
+        <h1 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           {{ t('tasks.create.header') }}
         </h1>
 
         <form @submit.prevent="submit" class="grid grid-cols-6 gap-6">
           <!-- Título -->
           <div class="col-span-6 md:col-span-4">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.title') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.title') }}</label>
             <input v-model="form.title" type="text"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white" />
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white" />
           </div>
 
           <!-- Estado -->
           <div class="col-span-6 md:col-span-2">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('holiday.state.label') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('holiday.state.label') }}</label>
             <input v-model="stateUF" type="text" maxlength="2"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white uppercase" />
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white uppercase" />
           </div>
 
           <!-- Descrição -->
           <div class="col-span-6">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.description') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.description') }}</label>
             <textarea v-model="form.description" rows="4"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white"></textarea>
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white"></textarea>
           </div>
 
           <!-- Datas -->
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.start_date') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.start_date') }}</label>
             <input v-model="form.start_date" type="date"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white" />
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white" />
           </div>
 
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.end_date') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.end_date') }}</label>
             <input v-model="form.due_date" type="date"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white" />
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white" />
           </div>
 
           <!-- Status e Prioridade -->
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.status') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.status') }}</label>
             <select v-model="form.status"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white">
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
               <option v-for="o in statusOptions" :key="o.value" :value="o.value">{{ t(o.labelKey) }}</option>
             </select>
           </div>
 
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.priority') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.priority') }}</label>
             <select v-model="form.priority"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white">
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
               <option v-for="o in priorityOptions" :key="o.value" :value="o.value">{{ t(o.labelKey) }}</option>
             </select>
           </div>
 
           <!-- Categoria e Horas -->
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.category') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.category') }}</label>
             <select v-model="form.category"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white">
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
               <option value="">{{ t('tasks.form.category_ph') }}</option>
               <option v-for="c in displayCategories" :key="c.value" :value="c.value">{{ c.label }}</option>
             </select>
           </div>
 
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.estimated_hours') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.estimated_hours') }}</label>
             <input v-model="form.estimated_hours" type="number"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white" />
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white" />
           </div>
 
           <!-- Tarefa Pai -->
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.parent_task') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.parent_task') }}</label>
             <select v-model="form.parent_task_id"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white">
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
               <option value="">{{ t('tasks.form.parent_task_none') }}</option>
               <option v-for="task in parentTasks" :key="task.id" :value="task.id">{{ task.title }}</option>
             </select>
@@ -342,9 +342,9 @@ function clearForm() {
 
           <!-- Usuário -->
           <div class="col-span-6 md:col-span-3">
-            <label class="block text-sm font-medium text-slate-200 mb-2">{{ t('tasks.form.assignee') }}</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-slate-200 mb-2">{{ t('tasks.form.assignee') }}</label>
             <select v-model="form.assigned_to"
-              class="w-full px-3 py-2 rounded-md bg-white/10 border border-white/10 text-white">
+              class="w-full px-3 py-2 rounded-md bg-white dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white">
               <option value="">{{ t('tasks.form.assignee_none') }}</option>
               <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
             </select>
