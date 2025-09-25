@@ -2,33 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use App\Models\ActivityLog;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\DB;
+use App\Models\Task;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ReportController extends Controller
 {
     public function index()
     {
         $userId = Auth::user()->id;
-        
+
         // Estatísticas gerais
         $stats = $this->getGeneralStats($userId);
-        
+
         // Dados para gráficos
         $productivityData = $this->getProductivityData($userId);
         $tasksByCategory = $this->getTasksByCategory($userId);
         $completionTimeData = $this->getCompletionTimeData($userId);
-        
+
         // Relatórios semanais/mensais
         $weeklyReport = $this->getWeeklyReport($userId);
         $monthlyReport = $this->getMonthlyReport($userId);
-        
+
         // Histórico de atividades
         $recentActivities = $this->getRecentActivities($userId);
 
@@ -39,7 +38,7 @@ class ReportController extends Controller
             'completionTimeData' => $completionTimeData,
             'weeklyReport' => $weeklyReport,
             'monthlyReport' => $monthlyReport,
-            'recentActivities' => $recentActivities
+            'recentActivities' => $recentActivities,
         ]);
     }
 
@@ -82,7 +81,7 @@ class ReportController extends Controller
             'overdue_tasks' => $overdueTasks,
             'avg_completion_time' => round($avgCompletionTime, 1),
             'productivity_rate' => round($productivityRate, 1),
-            'completion_percentage' => round($productivityRate, 1)
+            'completion_percentage' => round($productivityRate, 1),
         ];
     }
 
@@ -96,7 +95,7 @@ class ReportController extends Controller
 
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
-            
+
             $tasksCreated = Task::where('created_by', $userId)
                 ->whereDate('created_at', $date)
                 ->count();
@@ -110,7 +109,7 @@ class ReportController extends Controller
                 'date' => $date->format('d/m'),
                 'created' => $tasksCreated,
                 'completed' => $tasksCompleted,
-                'productivity' => $tasksCreated > 0 ? ($tasksCompleted / $tasksCreated) * 100 : 0
+                'productivity' => $tasksCreated > 0 ? ($tasksCompleted / $tasksCreated) * 100 : 0,
             ];
         }
 
@@ -134,7 +133,7 @@ class ReportController extends Controller
                 return [
                     'category' => $this->getStatusLabel($item->status),
                     'count' => $item->count,
-                    'color' => $this->getStatusColor($item->status)
+                    'color' => $this->getStatusColor($item->status),
                 ];
             });
 
@@ -147,13 +146,13 @@ class ReportController extends Controller
                 return [
                     'category' => $this->getPriorityLabel($item->priority),
                     'count' => $item->count,
-                    'color' => $this->getPriorityColor($item->priority)
+                    'color' => $this->getPriorityColor($item->priority),
                 ];
             });
 
         return [
             'by_status' => $byStatus,
-            'by_priority' => $byPriority
+            'by_priority' => $byPriority,
         ];
     }
 
@@ -177,15 +176,21 @@ class ReportController extends Controller
             '2-3' => 0,
             '4-7' => 0,
             '8-14' => 0,
-            '15+' => 0
+            '15+' => 0,
         ];
 
         foreach ($completionTimes as $time) {
-            if ($time <= 1) $ranges['0-1']++;
-            elseif ($time <= 3) $ranges['2-3']++;
-            elseif ($time <= 7) $ranges['4-7']++;
-            elseif ($time <= 14) $ranges['8-14']++;
-            else $ranges['15+']++;
+            if ($time <= 1) {
+                $ranges['0-1']++;
+            } elseif ($time <= 3) {
+                $ranges['2-3']++;
+            } elseif ($time <= 7) {
+                $ranges['4-7']++;
+            } elseif ($time <= 14) {
+                $ranges['8-14']++;
+            } else {
+                $ranges['15+']++;
+            }
         }
 
         return [
@@ -193,7 +198,7 @@ class ReportController extends Controller
             'average' => $completionTimes->avg(),
             'median' => $completionTimes->median(),
             'fastest' => $completionTimes->min(),
-            'slowest' => $completionTimes->max()
+            'slowest' => $completionTimes->max(),
         ];
     }
 
@@ -216,7 +221,7 @@ class ReportController extends Controller
         $dailyActivity = [];
         for ($i = 0; $i < 7; $i++) {
             $date = $startOfWeek->copy()->addDays($i);
-            
+
             $dailyActivity[] = [
                 'day' => $date->format('D'),
                 'created' => Task::where('created_by', $userId)
@@ -225,7 +230,7 @@ class ReportController extends Controller
                 'completed' => Task::where('created_by', $userId)
                     ->where('status', 'completed')
                     ->whereDate('updated_at', $date)
-                    ->count()
+                    ->count(),
             ];
         }
 
@@ -234,7 +239,7 @@ class ReportController extends Controller
             'total_tasks' => $totalTasks,
             'completed_tasks' => $completedTasks,
             'completion_rate' => $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0,
-            'daily_activity' => $dailyActivity
+            'daily_activity' => $dailyActivity,
         ];
     }
 
@@ -270,7 +275,7 @@ class ReportController extends Controller
             'completed_tasks' => $completedTasks,
             'completion_rate' => $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100, 1) : 0,
             'growth_from_last_month' => round($growth, 1),
-            'avg_tasks_per_day' => round($totalTasks / Carbon::now()->daysInMonth, 1)
+            'avg_tasks_per_day' => round($totalTasks / Carbon::now()->daysInMonth, 1),
         ];
     }
 
@@ -294,7 +299,7 @@ class ReportController extends Controller
                     'description' => $activity->getFormattedDescription(),
                     'task_title' => $activity->task ? $activity->task->title : null,
                     'created_at' => $activity->created_at->format('d/m/Y H:i'),
-                    'time_ago' => $activity->created_at->diffForHumans()
+                    'time_ago' => $activity->created_at->diffForHumans(),
                 ];
             });
     }
@@ -306,14 +311,14 @@ class ReportController extends Controller
     {
         $userId = Auth::user()->id;
         $period = $request->get('period', 'month'); // week, month, year
-        
+
         $data = [
             'user' => Auth::user(),
             'period' => $period,
             'stats' => $this->getGeneralStats($userId),
             'productivity_data' => $this->getProductivityData($userId),
             'tasks_by_category' => $this->getTasksByCategory($userId),
-            'completion_time_data' => $this->getCompletionTimeData($userId)
+            'completion_time_data' => $this->getCompletionTimeData($userId),
         ];
 
         // Aqui você implementaria a geração do PDF
@@ -328,11 +333,11 @@ class ReportController extends Controller
     {
         $userId = Auth::user()->id;
         $period = $request->get('period', 'month');
-        
+
         $filename = "relatorio_{$period}_" . Auth::user()->id . "_" . date('Y-m-d_H-i-s') . '.csv';
         $filepath = storage_path('app/exports/' . $filename);
 
-        if (!file_exists(dirname($filepath))) {
+        if (! file_exists(dirname($filepath))) {
             mkdir(dirname($filepath), 0755, true);
         }
 
@@ -341,7 +346,7 @@ class ReportController extends Controller
         // Cabeçalho
         fputcsv($file, [
             'Período', 'Total de Tarefas', 'Tarefas Concluídas', 'Taxa de Conclusão (%)',
-            'Tempo Médio de Conclusão (dias)', 'Tarefas Pendentes', 'Tarefas em Progresso'
+            'Tempo Médio de Conclusão (dias)', 'Tarefas Pendentes', 'Tarefas em Progresso',
         ]);
 
         // Dados
@@ -353,7 +358,7 @@ class ReportController extends Controller
             $stats['productivity_rate'],
             $stats['avg_completion_time'],
             $stats['pending_tasks'],
-            $stats['in_progress_tasks']
+            $stats['in_progress_tasks'],
         ]);
 
         fclose($file);
@@ -408,10 +413,10 @@ class ReportController extends Controller
     public function apiIndex()
     {
         $userId = Auth::id();
-        
+
         // Estatísticas gerais
         $stats = $this->getGeneralStats($userId);
-        
+
         // Dados para gráficos
         $productivityData = $this->getProductivityData($userId);
         $tasksByCategory = $this->getTasksByCategory($userId);
@@ -425,4 +430,4 @@ class ReportController extends Controller
             'completionTimeData' => $completionTimeData,
         ]);
     }
-} 
+}

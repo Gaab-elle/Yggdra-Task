@@ -1,9 +1,9 @@
 <?php
 
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -41,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Authenticate::redirectUsing(function ($request) {
             // Pega o locale da rota atual ou usa o padrão
             $locale = $request->route('locale') ?: app()->getLocale() ?: config('app.locale', 'pt');
+
             return route('login', ['locale' => $locale]);
         });
     })

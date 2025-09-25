@@ -67,7 +67,7 @@ class ProfileController extends Controller
     public function apiShow(Request $request)
     {
         return response()->json([
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
@@ -88,7 +88,7 @@ class ProfileController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Perfil atualizado com sucesso!',
-            'user' => $user
+            'user' => $user,
         ]);
     }
 }

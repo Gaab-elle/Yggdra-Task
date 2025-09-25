@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use App\Http\Controllers\LanguageController;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -28,7 +27,7 @@ class HandleInertiaRequests extends Middleware
 
         // Verifica se a rota tem locale definido
         $locale = $request->route('locale');
-        if ($locale && !in_array($locale, ['pt', 'en'], true)) {
+        if ($locale && ! in_array($locale, ['pt', 'en'], true)) {
             return $next($request);
         }
 
@@ -64,5 +63,5 @@ class HandleInertiaRequests extends Middleware
             'flash' => ['message' => fn () => $request->session()->get('message')],
         ]);
     }
-    
+
 }

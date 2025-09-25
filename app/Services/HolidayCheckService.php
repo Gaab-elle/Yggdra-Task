@@ -9,7 +9,8 @@ class HolidayCheckService
 {
     public function __construct(
         private HolidayService $holidayService
-    ) {}
+    ) {
+    }
 
     /**
      * Verifica se uma data é feriado
@@ -19,14 +20,15 @@ class HolidayCheckService
         try {
             $carbonDate = Carbon::parse($date);
             $state = $state ?: 'SP'; // Default para SP se não especificado
-            
+
             return $this->holidayService->isHoliday($carbonDate, $state);
         } catch (\Exception $e) {
             Log::error('Erro ao verificar se é feriado', [
                 'error' => $e->getMessage(),
                 'date' => $date,
-                'state' => $state
+                'state' => $state,
             ]);
+
             return null;
         }
     }

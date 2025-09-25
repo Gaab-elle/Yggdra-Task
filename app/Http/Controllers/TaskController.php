@@ -4,22 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Events\TaskAssigned;
 use App\Events\TaskDelegated;
-use App\Notifications\TaskAssignedNotification;
-use App\Notifications\TaskDelegatedNotification;
-use App\Notifications\TaskCreatedNotification;
-use App\Notifications\TaskEditedNotification;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\TaskAssignedNotification;
+use App\Notifications\TaskCreatedNotification;
+use App\Notifications\TaskDelegatedNotification;
+use App\Notifications\TaskEditedNotification;
 use App\Services\NotificationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -111,8 +109,8 @@ class TaskController extends Controller
                 'categories' => $categories,
                 'tags' => $allTags,
                 'users' => $users,
-                'current' => $request->only(['status', 'priority', 'category', 'tags', 'assignee', 'date_from', 'date_to', 'search', 'task_type'])
-            ]
+                'current' => $request->only(['status', 'priority', 'category', 'tags', 'assignee', 'date_from', 'date_to', 'search', 'task_type']),
+            ],
         ]);
     }
 
@@ -139,7 +137,7 @@ class TaskController extends Controller
             'training',
             'maintenance',
             'infrastructure',
-            'security'
+            'security',
         ];
 
         // Categorias existentes no banco
@@ -156,14 +154,14 @@ class TaskController extends Controller
         return Inertia::render('Tasks/Create', [
             'users' => $users,
             'parentTasks' => $parentTasks,
-            'categories' => $allCategories
+            'categories' => $allCategories,
         ]);
     }
 
     public function show($locale, Task $task)
     {
         // Verificar se o usuário está autenticado
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login', ['locale' => $locale]);
         }
 
@@ -175,7 +173,7 @@ class TaskController extends Controller
         $task->load(['assignedTo', 'subtasks', 'attachments', 'comments.user']);
 
         return Inertia::render('Tasks/Show', [
-            'task' => $task
+            'task' => $task,
         ]);
     }
 
@@ -183,7 +181,7 @@ class TaskController extends Controller
     {
         Log::info('Task creation attempt', [
             'user_id' => Auth::id(),
-            'request_data' => $request->all()
+            'request_data' => $request->all(),
         ]);
 
         $validator = Validator::make($request->all(), [
@@ -198,17 +196,17 @@ class TaskController extends Controller
             'tags.*' => 'string|max:50',
             'estimated_hours' => 'nullable|integer|min:0',
             'assigned_to' => 'nullable|exists:users,id',
-            'parent_task_id' => 'nullable|exists:tasks,id'
+            'parent_task_id' => 'nullable|exists:tasks,id',
         ], [
             'title.required' => 'O título é obrigatório.',
             'title.min' => 'O título deve ter pelo menos 3 caracteres.',
             'status.in' => 'O status deve ser: pendente, em progresso ou concluída.',
-            'priority.in' => 'A prioridade deve ser: baixa, média ou alta.'
+            'priority.in' => 'A prioridade deve ser: baixa, média ou alta.',
         ]);
 
         if ($validator->fails()) {
             Log::error('Validation failed', ['errors' => $validator->errors()]);
-            
+
             return back()->withErrors($validator)->withInput();
         }
 
@@ -226,7 +224,7 @@ class TaskController extends Controller
                 'assigned_to' => $request->assigned_to,
                 'parent_task_id' => $request->parent_task_id,
                 'order' => $this->getNextOrder($request->parent_task_id),
-                'created_by' => Auth::id()
+                'created_by' => Auth::id(),
             ];
 
             Log::info('Creating task with data', $taskData);
@@ -240,47 +238,47 @@ class TaskController extends Controller
                 // Notificação no banco de dados
                 NotificationService::taskCreated($task, Auth::user());
                 Log::info('🔔 Notificação de tarefa criada salva no banco', ['task_id' => $task->id]);
-                
+
                 // Disparar evento para WebSocket
                 try {
                     $event = new \App\Events\TaskCreated($task, Auth::user());
                     event($event);
-                    
+
                     Log::info('📡 Evento TaskCreated disparado com sucesso', [
                         'event_class' => \App\Events\TaskCreated::class,
-                        'task_id' => $task->id
+                        'task_id' => $task->id,
                     ]);
                 } catch (\Exception $e) {
                     Log::error('❌ Erro ao disparar evento TaskCreated', [
                         'task_id' => $task->id,
-                        'error' => $e->getMessage()
+                        'error' => $e->getMessage(),
                     ]);
                 }
-                
+
                 // Enviar email de notificação para o criador
                 /** @var \App\Models\User $user */
                 $user = Auth::user();
                 $user->notify(new TaskCreatedNotification($task, $user));
                 Log::info('📧 Email de notificação de tarefa criada enviado', ['task_id' => $task->id]);
-                
+
                 // Adicionar mensagem de sucesso para o snackbar
                 session()->flash('email_sent', [
                     'type' => 'success',
                     'title' => 'Tarefa Criada!',
-                    'message' => "Tarefa '{$task->title}' criada com sucesso e notificação enviada para seu email"
+                    'message' => "Tarefa '{$task->title}' criada com sucesso e notificação enviada para seu email",
                 ]);
-                
+
             } catch (\Exception $e) {
                 Log::error('❌ Erro ao criar notificação de tarefa criada', [
                     'task_id' => $task->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
-                
+
                 // Adicionar mensagem de erro para o snackbar
                 session()->flash('email_error', [
                     'type' => 'error',
                     'title' => 'Erro na Notificação',
-                    'message' => 'Tarefa criada, mas não foi possível enviar a notificação por email'
+                    'message' => 'Tarefa criada, mas não foi possível enviar a notificação por email',
                 ]);
             }
 
@@ -289,134 +287,134 @@ class TaskController extends Controller
                 Log::info('🔔 Tarefa atribuída detectada', [
                     'task_id' => $task->id,
                     'assigned_to' => $request->assigned_to,
-                    'current_user' => Auth::id()
+                    'current_user' => Auth::id(),
                 ]);
-                
+
                 $assignedTo = User::find($request->assigned_to);
                 if ($assignedTo) {
                     Log::info('👤 Usuário destinatário encontrado', [
                         'user_id' => $assignedTo->id,
                         'user_email' => $assignedTo->email,
-                        'user_name' => $assignedTo->name
+                        'user_name' => $assignedTo->name,
                     ]);
-                    
+
                     // Verificar se é uma delegação (usuário diferente do criador)
                     $isDelegation = $request->assigned_to !== $task->created_by;
-                    
+
                     if ($isDelegation) {
                         Log::info('🔄 Delegação de tarefa detectada', [
                             'task_id' => $task->id,
                             'delegated_by' => Auth::id(),
                             'delegated_to' => $assignedTo->id,
-                            'original_creator' => $task->created_by
+                            'original_creator' => $task->created_by,
                         ]);
-                        
+
                         // Disparar evento para WebSocket (delegação)
                         try {
                             $event = new TaskDelegated($task, Auth::user(), $assignedTo);
                             event($event);
-                            
+
                             Log::info('📡 Evento TaskDelegated disparado com sucesso', [
                                 'event_class' => TaskDelegated::class,
-                                'channel' => 'user.' . $assignedTo->id
+                                'channel' => 'user.' . $assignedTo->id,
                             ]);
                         } catch (\Exception $e) {
                             Log::error('❌ Erro ao disparar evento TaskDelegated', [
                                 'task_id' => $task->id,
                                 'error' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString()
+                                'trace' => $e->getTraceAsString(),
                             ]);
                         }
-                        
+
                         // Enviar notificação por email (delegação)
                         try {
                             $assignedTo->notify(new TaskDelegatedNotification($task, Auth::user(), $assignedTo));
                             Log::info('📧 Notificação de tarefa delegada enviada com sucesso', [
                                 'task_id' => $task->id,
                                 'assigned_to' => $assignedTo->email,
-                                'notification_class' => TaskDelegatedNotification::class
+                                'notification_class' => TaskDelegatedNotification::class,
                             ]);
-                            
+
                             // Adicionar mensagem de sucesso para o snackbar
                             session()->flash('email_sent', [
                                 'type' => 'success',
                                 'title' => 'Tarefa Delegada!',
-                                'message' => "Tarefa delegada para {$assignedTo->name} ({$assignedTo->email})"
+                                'message' => "Tarefa delegada para {$assignedTo->name} ({$assignedTo->email})",
                             ]);
-                            
+
                         } catch (\Exception $e) {
                             Log::error('❌ Erro ao enviar notificação de tarefa delegada', [
                                 'task_id' => $task->id,
                                 'error' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString()
+                                'trace' => $e->getTraceAsString(),
                             ]);
-                            
+
                             // Adicionar mensagem de erro para o snackbar
                             session()->flash('email_error', [
                                 'type' => 'error',
                                 'title' => 'Erro na Delegação',
-                                'message' => 'Não foi possível enviar a notificação de delegação'
+                                'message' => 'Não foi possível enviar a notificação de delegação',
                             ]);
                         }
 
-                                            // Notificação já foi criada via Laravel Notifications
-                    Log::info('🔔 Notificação de tarefa delegada criada via Laravel Notifications', [
-                        'task_id' => $task->id,
-                        'delegated_to' => $assignedTo->id
-                    ]);
+                        // Notificação já foi criada via Laravel Notifications
+                        Log::info('🔔 Notificação de tarefa delegada criada via Laravel Notifications', [
+                            'task_id' => $task->id,
+                            'delegated_to' => $assignedTo->id,
+                        ]);
                     } else {
                         // Tarefa atribuída ao criador (não é delegação)
                         Log::info('ℹ️ Tarefa atribuída ao criador (não é delegação)', [
                             'task_id' => $task->id,
                             'assigned_to' => $assignedTo->id,
-                            'created_by' => $task->created_by
+                            'created_by' => $task->created_by,
                         ]);
-                        
+
                         // Disparar evento para WebSocket (atribuição normal)
                         try {
                             $event = new TaskAssigned($task, Auth::user(), $assignedTo);
                             event($event);
-                            
+
                             Log::info('📡 Evento TaskAssigned disparado com sucesso', [
                                 'event_class' => TaskAssigned::class,
-                                'channel' => 'user.' . $assignedTo->id
+                                'channel' => 'user.' . $assignedTo->id,
                             ]);
                         } catch (\Exception $e) {
                             Log::error('❌ Erro ao disparar evento TaskAssigned', [
                                 'task_id' => $task->id,
                                 'error' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString()
+                                'trace' => $e->getTraceAsString(),
                             ]);
                         }
-                        
+
                         // Enviar notificação por email (atribuição normal)
                         try {
                             $assignedTo->notify(new TaskAssignedNotification($task, Auth::user(), $assignedTo));
                             Log::info('📧 Notificação de tarefa atribuída enviada com sucesso', [
                                 'task_id' => $task->id,
                                 'assigned_to' => $assignedTo->email,
-                                'notification_class' => TaskAssignedNotification::class
+                                'notification_class' => TaskAssignedNotification::class,
                             ]);
-                            
+
                             // Adicionar mensagem de sucesso para o snackbar
                             session()->flash('email_sent', [
                                 'type' => 'success',
                                 'title' => 'Notificação Enviada!',
-                                'message' => "Notificação enviada para {$assignedTo->name} ({$assignedTo->email})"
+                                'message' => "Notificação enviada para {$assignedTo->name} ({$assignedTo->email})",
                             ]);
-                            
+
                         } catch (\Exception $e) {
                             Log::error('❌ Erro ao enviar notificação de tarefa atribuída', [
                                 'task_id' => $task->id,
                                 'error' => $e->getMessage(),
-                                'trace' => $e->getTraceAsString()
+                                'trace' => $e->getTraceAsString(),
                             ]);
-                            
+
                             // Adicionar mensagem de erro para o snackbar
                             session()->flash('email_error', [
                                 'type' => 'error',
                                 'title' => 'Erro na Notificação',
-                                'message' => 'Não foi possível enviar a notificação'
+                                'message' => 'Não foi possível enviar a notificação',
                             ]);
                         }
 
@@ -425,25 +423,25 @@ class TaskController extends Controller
                             NotificationService::taskAssigned($task, $assignedTo);
                             Log::info('🔔 Notificação de tarefa atribuída criada no sistema', [
                                 'task_id' => $task->id,
-                                'assigned_to' => $assignedTo->id
+                                'assigned_to' => $assignedTo->id,
                             ]);
                         } catch (\Exception $e) {
                             Log::error('❌ Erro ao criar notificação de tarefa atribuída no sistema', [
                                 'task_id' => $task->id,
-                                'error' => $e->getMessage()
+                                'error' => $e->getMessage(),
                             ]);
                         }
                     }
                 } else {
                     Log::warning('⚠️ Usuário destinatário não encontrado', [
-                        'assigned_to_id' => $request->assigned_to
+                        'assigned_to_id' => $request->assigned_to,
                     ]);
                 }
             } else {
                 Log::info('ℹ️ Tarefa não atribuída a outro usuário', [
                     'task_id' => $task->id,
                     'assigned_to' => $request->assigned_to,
-                    'current_user' => Auth::id()
+                    'current_user' => Auth::id(),
                 ]);
             }
 
@@ -452,16 +450,16 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             Log::error('Error creating task', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
+
             return back()->withErrors(['error' => 'Erro ao criar tarefa: ' . $e->getMessage()])->withInput();
         }
     }
 
     public function edit($locale, Task $task)
     {
-        if (!$task->canEdit(Auth::user())) {
+        if (! $task->canEdit(Auth::user())) {
             return back()->with('error', 'Você não tem permissão para editar esta tarefa.');
         }
 
@@ -487,7 +485,7 @@ class TaskController extends Controller
             'training',
             'maintenance',
             'infrastructure',
-            'security'
+            'security',
         ];
 
         // Categorias existentes no banco
@@ -506,13 +504,13 @@ class TaskController extends Controller
             'users' => $users,
             'parentTasks' => $parentTasks,
             'categories' => $allCategories,
-            'userState' => 'SP' // Estado padrão para verificação de feriados
+            'userState' => 'SP', // Estado padrão para verificação de feriados
         ]);
     }
 
     public function update(Request $request, $locale, Task $task)
     {
-        if (!$task->canEdit(Auth::user())) {
+        if (! $task->canEdit(Auth::user())) {
             return back()->with('error', 'Você não tem permissão para editar esta tarefa.');
         }
 
@@ -529,7 +527,7 @@ class TaskController extends Controller
             'estimated_hours' => 'nullable|integer|min:0',
             'actual_hours' => 'nullable|integer|min:0',
             'assigned_to' => 'nullable|exists:users,id',
-            'parent_task_id' => 'nullable|exists:tasks,id'
+            'parent_task_id' => 'nullable|exists:tasks,id',
         ]);
 
         if ($validator->fails()) {
@@ -542,12 +540,12 @@ class TaskController extends Controller
         $oldTitle = $task->title;
         $oldDescription = $task->description;
         $oldDueDate = $task->due_date;
-        
+
         $task->update($request->all());
-        
+
         // Detectar mudanças para notificação
         $changes = [];
-        
+
         // Log para debug
         Log::info('🔍 Verificando mudanças na tarefa', [
             'task_id' => $task->id,
@@ -560,9 +558,9 @@ class TaskController extends Controller
             'old_assigned_to' => $oldAssignedTo,
             'new_assigned_to' => $request->assigned_to,
             'old_due_date' => $oldDueDate,
-            'new_due_date' => $request->due_date
+            'new_due_date' => $request->due_date,
         ]);
-        
+
         if ($request->title !== $oldTitle) {
             $changes['title'] = ['old' => $oldTitle, 'new' => $request->title];
         }
@@ -578,7 +576,7 @@ class TaskController extends Controller
         if ($request->due_date !== $oldDueDate) {
             $changes['due_date'] = [
                 'old' => $oldDueDate ? $oldDueDate->format('d/m/Y') : 'Não definida',
-                'new' => $request->due_date ? \Carbon\Carbon::parse($request->due_date)->format('d/m/Y') : 'Não definida'
+                'new' => $request->due_date ? \Carbon\Carbon::parse($request->due_date)->format('d/m/Y') : 'Não definida',
             ];
         }
         if ($request->assigned_to != $oldAssignedTo) { // Usar != em vez de !== para comparar string com int
@@ -586,18 +584,18 @@ class TaskController extends Controller
             $newUser = $request->assigned_to ? User::find($request->assigned_to) : null;
             $changes['assigned_to'] = [
                 'old' => $oldUser ? $oldUser->name : 'Não atribuída',
-                'new' => $newUser ? $newUser->name : 'Não atribuída'
+                'new' => $newUser ? $newUser->name : 'Não atribuída',
             ];
         }
-        
+
         Log::info('🔍 Mudanças detectadas', [
             'task_id' => $task->id,
             'changes_count' => count($changes),
-            'changes' => $changes
+            'changes' => $changes,
         ]);
-        
+
         // Enviar notificação de edição se houver mudanças
-        if (!empty($changes)) {
+        if (! empty($changes)) {
             try {
                 // Notificar o criador da tarefa (se não for quem editou)
                 if ($task->created_by !== Auth::id()) {
@@ -607,11 +605,11 @@ class TaskController extends Controller
                         Log::info('📧 Notificação de edição enviada para o criador', [
                             'task_id' => $task->id,
                             'creator_id' => $creator->id,
-                            'changes_count' => count($changes)
+                            'changes_count' => count($changes),
                         ]);
                     }
                 }
-                
+
                 // Notificar o usuário atribuído (se existir e não for quem editou)
                 if ($task->assigned_to && $task->assigned_to !== Auth::id()) {
                     $assignedUser = User::find($task->assigned_to);
@@ -620,34 +618,34 @@ class TaskController extends Controller
                         Log::info('📧 Notificação de edição enviada para o usuário atribuído', [
                             'task_id' => $task->id,
                             'assigned_user_id' => $assignedUser->id,
-                            'changes_count' => count($changes)
+                            'changes_count' => count($changes),
                         ]);
                     }
                 }
-                
+
                 // Adicionar mensagem de sucesso para o snackbar
                 session()->flash('email_sent', [
                     'type' => 'success',
                     'title' => 'Tarefa Editada!',
-                    'message' => "Tarefa '{$task->title}' editada com sucesso e notificações enviadas"
+                    'message' => "Tarefa '{$task->title}' editada com sucesso e notificações enviadas",
                 ]);
-                
+
             } catch (\Exception $e) {
                 Log::error('❌ Erro ao enviar notificação de edição', [
                     'task_id' => $task->id,
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
                 ]);
-                
+
                 // Adicionar mensagem de erro para o snackbar
                 session()->flash('email_error', [
                     'type' => 'error',
                     'title' => 'Erro na Notificação',
-                    'message' => 'Tarefa editada, mas não foi possível enviar as notificações'
+                    'message' => 'Tarefa editada, mas não foi possível enviar as notificações',
                 ]);
             }
         }
-        
+
         // Notificar mudanças de status
         if ($request->status !== $oldStatus) {
             try {
@@ -656,16 +654,16 @@ class TaskController extends Controller
                 Log::info('🔔 Notificação de mudança de status criada', [
                     'task_id' => $task->id,
                     'old_status' => $oldStatus,
-                    'new_status' => $request->status
+                    'new_status' => $request->status,
                 ]);
             } catch (\Exception $e) {
                 Log::error('❌ Erro ao criar notificação de mudança de status', [
                     'task_id' => $task->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
-        
+
         // Notificar mudanças de prioridade
         if ($request->priority !== $oldPriority) {
             try {
@@ -674,108 +672,108 @@ class TaskController extends Controller
                 Log::info('🔔 Notificação de mudança de prioridade criada', [
                     'task_id' => $task->id,
                     'old_priority' => $oldPriority,
-                    'new_priority' => $request->priority
+                    'new_priority' => $request->priority,
                 ]);
             } catch (\Exception $e) {
                 Log::error('❌ Erro ao criar notificação de mudança de prioridade', [
                     'task_id' => $task->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
 
         // Se a tarefa foi reatribuída a um usuário diferente, disparar evento e enviar email
-        if ($request->assigned_to && 
-            $request->assigned_to !== $oldAssignedTo && 
+        if ($request->assigned_to &&
+            $request->assigned_to !== $oldAssignedTo &&
             $request->assigned_to !== Auth::id()) {
-            
+
             $assignedTo = User::find($request->assigned_to);
             if ($assignedTo) {
                 // Verificar se é uma delegação (usuário diferente do criador)
                 $isDelegation = $request->assigned_to !== $task->created_by;
-                
+
                 if ($isDelegation) {
                     Log::info('🔄 Delegação de tarefa detectada na edição', [
                         'task_id' => $task->id,
                         'delegated_by' => Auth::id(),
                         'delegated_to' => $assignedTo->id,
-                        'original_creator' => $task->created_by
+                        'original_creator' => $task->created_by,
                     ]);
-                    
+
                     // Disparar evento para WebSocket (delegação)
                     event(new TaskDelegated($task, Auth::user(), $assignedTo));
-                    
+
                     // Enviar notificação por email (delegação)
                     try {
                         $assignedTo->notify(new TaskDelegatedNotification($task, Auth::user(), $assignedTo));
                         Log::info('📧 Notificação de tarefa delegada enviada na edição', [
                             'task_id' => $task->id,
-                            'assigned_to' => $assignedTo->email
+                            'assigned_to' => $assignedTo->email,
                         ]);
-                        
+
                         // Adicionar mensagem de sucesso para o snackbar
                         session()->flash('email_sent', [
                             'type' => 'success',
                             'title' => 'Tarefa Delegada!',
-                            'message' => "Tarefa delegada para {$assignedTo->name} ({$assignedTo->email})"
+                            'message' => "Tarefa delegada para {$assignedTo->name} ({$assignedTo->email})",
                         ]);
-                        
+
                     } catch (\Exception $e) {
                         Log::error('❌ Erro ao enviar notificação de tarefa delegada na edição', [
                             'task_id' => $task->id,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ]);
-                        
+
                         // Adicionar mensagem de erro para o snackbar
                         session()->flash('email_error', [
                             'type' => 'error',
                             'title' => 'Erro na Delegação',
-                            'message' => 'Não foi possível enviar a notificação de delegação'
+                            'message' => 'Não foi possível enviar a notificação de delegação',
                         ]);
                     }
 
                     // Notificação já foi criada via Laravel Notifications
                     Log::info('🔔 Notificação de tarefa delegada criada via Laravel Notifications (edição)', [
                         'task_id' => $task->id,
-                        'delegated_to' => $assignedTo->id
+                        'delegated_to' => $assignedTo->id,
                     ]);
                 } else {
                     // Tarefa reatribuída ao criador (não é delegação)
                     Log::info('ℹ️ Tarefa reatribuída ao criador (não é delegação)', [
                         'task_id' => $task->id,
                         'assigned_to' => $assignedTo->id,
-                        'created_by' => $task->created_by
+                        'created_by' => $task->created_by,
                     ]);
-                    
+
                     // Disparar evento para WebSocket (atribuição normal)
                     event(new TaskAssigned($task, Auth::user(), $assignedTo));
-                    
+
                     // Enviar notificação por email (atribuição normal)
                     try {
                         $assignedTo->notify(new TaskAssignedNotification($task, Auth::user(), $assignedTo));
                         Log::info('📧 Notificação de tarefa reatribuída enviada', [
                             'task_id' => $task->id,
-                            'assigned_to' => $assignedTo->email
+                            'assigned_to' => $assignedTo->email,
                         ]);
-                        
+
                         // Adicionar mensagem de sucesso para o snackbar
                         session()->flash('email_sent', [
                             'type' => 'success',
                             'title' => 'Notificação Enviada!',
-                            'message' => "Notificação enviada para {$assignedTo->name} ({$assignedTo->email})"
+                            'message' => "Notificação enviada para {$assignedTo->name} ({$assignedTo->email})",
                         ]);
-                        
+
                     } catch (\Exception $e) {
                         Log::error('❌ Erro ao enviar notificação de tarefa reatribuída', [
                             'task_id' => $task->id,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ]);
-                        
+
                         // Adicionar mensagem de erro para o snackbar
                         session()->flash('email_error', [
                             'type' => 'error',
                             'title' => 'Erro na Notificação',
-                            'message' => 'Não foi possível enviar a notificação'
+                            'message' => 'Não foi possível enviar a notificação',
                         ]);
                     }
 
@@ -784,12 +782,12 @@ class TaskController extends Controller
                         NotificationService::taskAssigned($task, $assignedTo);
                         Log::info('🔔 Notificação de tarefa reatribuída criada no sistema', [
                             'task_id' => $task->id,
-                            'assigned_to' => $assignedTo->id
+                            'assigned_to' => $assignedTo->id,
                         ]);
                     } catch (\Exception $e) {
                         Log::error('❌ Erro ao criar notificação de tarefa reatribuída no sistema', [
                             'task_id' => $task->id,
-                            'error' => $e->getMessage()
+                            'error' => $e->getMessage(),
                         ]);
                     }
                 }
@@ -811,43 +809,45 @@ class TaskController extends Controller
                 'request_accept' => $request->header('Accept'),
                 'expects_json' => $request->expectsJson(),
                 'is_ajax' => $request->ajax(),
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
-            if (!$task->canEdit(Auth::user())) {
+            if (! $task->canEdit(Auth::user())) {
                 Log::warning('❌ Usuário sem permissão para editar tarefa', [
                     'task_id' => $task->id,
-                    'user_id' => Auth::id()
+                    'user_id' => Auth::id(),
                 ]);
-                
+
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Você não tem permissão para alterar o status desta tarefa.'
+                        'message' => 'Você não tem permissão para alterar o status desta tarefa.',
                     ], 403);
                 }
+
                 return back()->with('error', 'Você não tem permissão para alterar o status desta tarefa.');
             }
 
             $validator = Validator::make($request->all(), [
                 'status' => ['required', Rule::in(['pending', 'in_progress', 'completed'])],
             ], [
-                'status.in' => 'O status deve ser: pendente, em espera, em progresso, precisa revisão, aprovado ou concluída.'
+                'status.in' => 'O status deve ser: pendente, em espera, em progresso, precisa revisão, aprovado ou concluída.',
             ]);
 
             if ($validator->fails()) {
                 Log::warning('❌ Validação falhou', [
                     'task_id' => $task->id,
-                    'errors' => $validator->errors()->toArray()
+                    'errors' => $validator->errors()->toArray(),
                 ]);
-                
+
                 if ($request->expectsJson()) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Dados inválidos',
-                        'errors' => $validator->errors()
+                        'errors' => $validator->errors(),
                     ], 422);
                 }
+
                 return back()->withErrors($validator)->withInput();
             }
 
@@ -858,17 +858,17 @@ class TaskController extends Controller
             try {
                 $event = new \App\Events\TaskStatusUpdated($task, Auth::user(), $oldStatus, $request->status);
                 event($event);
-                
+
                 Log::info('📡 Evento TaskStatusUpdated disparado com sucesso', [
                     'event_class' => \App\Events\TaskStatusUpdated::class,
                     'task_id' => $task->id,
                     'old_status' => $oldStatus,
-                    'new_status' => $request->status
+                    'new_status' => $request->status,
                 ]);
             } catch (\Exception $e) {
                 Log::error('❌ Erro ao disparar evento TaskStatusUpdated', [
                     'task_id' => $task->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
 
@@ -878,12 +878,13 @@ class TaskController extends Controller
                 'task_title' => $task->title,
                 'old_status' => $oldStatus,
                 'new_status' => $request->status,
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             // Para requisições AJAX, retornar JSON
             if ($request->expectsJson()) {
                 Log::info('📤 Retornando resposta JSON para requisição AJAX');
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Status atualizado com sucesso!',
@@ -891,13 +892,14 @@ class TaskController extends Controller
                         'id' => $task->id,
                         'title' => $task->title,
                         'status' => $task->status,
-                        'old_status' => $oldStatus
-                    ]
+                        'old_status' => $oldStatus,
+                    ],
                 ]);
             }
 
             // Para requisições normais, redirecionar com mensagem de sucesso
             Log::info('📤 Retornando redirecionamento para requisição normal');
+
             return redirect()->route('tasks.index', ['locale' => $locale])->with('success', 'Status da tarefa atualizado com sucesso!');
 
         } catch (\Exception $e) {
@@ -905,13 +907,13 @@ class TaskController extends Controller
                 'task_id' => $task->id,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'user_id' => Auth::id()
+                'user_id' => Auth::id(),
             ]);
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Erro interno ao atualizar status da tarefa.'
+                    'message' => 'Erro interno ao atualizar status da tarefa.',
                 ], 500);
             }
 
@@ -924,7 +926,7 @@ class TaskController extends Controller
         $request->validate([
             'tasks' => 'required|array',
             'tasks.*.id' => 'required|exists:tasks,id',
-            'tasks.*.order' => 'required|integer|min:0'
+            'tasks.*.order' => 'required|integer|min:0',
         ]);
 
         foreach ($request->tasks as $taskData) {
@@ -938,7 +940,7 @@ class TaskController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Ordem das tarefas atualizada!'
+                'message' => 'Ordem das tarefas atualizada!',
             ]);
         }
 
@@ -947,7 +949,7 @@ class TaskController extends Controller
 
     public function destroy($locale, Task $task)
     {
-        if (!$task->canDelete(Auth::user())) {
+        if (! $task->canDelete(Auth::user())) {
             return back()->with('error', 'Você não tem permissão para excluir esta tarefa.');
         }
 
@@ -960,7 +962,7 @@ class TaskController extends Controller
     {
         // Verificar se o usuário tem permissão para excluir todas as tarefas
         $user = Auth::user();
-        
+
         // Excluir todas as tarefas do usuário
         $deletedCount = Task::where('created_by', $user->id)->delete();
 
@@ -988,7 +990,7 @@ class TaskController extends Controller
         $filepath = storage_path('app/public/exports/' . $filename);
 
         // Criar diretório se não existir
-        if (!file_exists(dirname($filepath))) {
+        if (! file_exists(dirname($filepath))) {
             mkdir(dirname($filepath), 0755, true);
         }
 
@@ -998,7 +1000,7 @@ class TaskController extends Controller
         fputcsv($file, [
             'ID', 'Título', 'Descrição', 'Status', 'Prioridade', 'Data de Vencimento',
             'Data de Início', 'Categoria', 'Tags', 'Tempo Estimado (min)', 'Tempo Real (min)',
-            'Responsável', 'Criado em', 'Atualizado em'
+            'Responsável', 'Criado em', 'Atualizado em',
         ]);
 
         // Dados
@@ -1017,7 +1019,7 @@ class TaskController extends Controller
                 $task->actual_hours,
                 $task->assignedTo ? $task->assignedTo->name : '',
                 $task->created_at->format('d/m/Y H:i:s'),
-                $task->updated_at->format('d/m/Y H:i:s')
+                $task->updated_at->format('d/m/Y H:i:s'),
             ]);
         }
 
@@ -1031,7 +1033,7 @@ class TaskController extends Controller
     public function backup($locale, Request $request)
     {
         $query = Task::where('created_by', Auth::id());
-        
+
         if ($request->filled('include_subtasks')) {
             $query->with(['subtasks', 'attachments', 'comments']);
         }
@@ -1042,14 +1044,14 @@ class TaskController extends Controller
             'exported_at' => now()->toISOString(),
             'user_id' => Auth::id(),
             'tasks_count' => $tasks->count(),
-            'tasks' => $tasks->toArray()
+            'tasks' => $tasks->toArray(),
         ];
 
         $filename = 'tasks_backup_' . date('Y-m-d_H-i-s') . '.json';
         $filepath = storage_path('app/public/backups/' . $filename);
 
         // Criar diretório se não existir
-        if (!file_exists(dirname($filepath))) {
+        if (! file_exists(dirname($filepath))) {
             mkdir(dirname($filepath), 0755, true);
         }
 
@@ -1063,17 +1065,17 @@ class TaskController extends Controller
     public function restore($locale, Request $request)
     {
         $request->validate([
-            'backup_file' => 'required|file|mimes:json|max:10240'
+            'backup_file' => 'required|file|mimes:json|max:10240',
         ]);
 
         $file = $request->file('backup_file');
         $content = file_get_contents($file->getPathname());
         $backupData = json_decode($content, true);
 
-        if (!$backupData || !isset($backupData['tasks'])) {
+        if (! $backupData || ! isset($backupData['tasks'])) {
             return response()->json([
                 'success' => false,
-                'message' => 'Arquivo de backup inválido.'
+                'message' => 'Arquivo de backup inválido.',
             ], 400);
         }
 
@@ -1085,8 +1087,8 @@ class TaskController extends Controller
             'backup_info' => [
                 'exported_at' => $backupData['exported_at'] ?? 'N/A',
                 'tasks_count' => count($backupData['tasks']),
-                'user_id' => $backupData['user_id'] ?? 'N/A'
-            ]
+                'user_id' => $backupData['user_id'] ?? 'N/A',
+            ],
         ]);
     }
 
@@ -1110,7 +1112,7 @@ class TaskController extends Controller
         $weekTasks = Task::where('created_by', $userId)
             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->get();
-        
+
         $weekCompletedTasks = $weekTasks->where('status', 'completed')->count();
         $weekProductivity = $weekTasks->count() > 0 ? round(($weekCompletedTasks / $weekTasks->count()) * 100, 1) : 0;
 
@@ -1118,7 +1120,7 @@ class TaskController extends Controller
         $monthTasks = Task::where('created_by', $userId)
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->get();
-        
+
         $monthCompletedTasks = $monthTasks->where('status', 'completed')->count();
         $monthProductivity = $monthTasks->count() > 0 ? round(($monthCompletedTasks / $monthTasks->count()) * 100, 1) : 0;
 
@@ -1156,7 +1158,7 @@ class TaskController extends Controller
             ->where('status', 'completed')
             ->whereDate('updated_at', $now->toDateString())
             ->count();
-        
+
         $dailyProgress = round(($todayCompleted / $dailyGoal) * 100, 1);
         $dailyProgress = min($dailyProgress, 100); // Máximo 100%
 
@@ -1166,7 +1168,7 @@ class TaskController extends Controller
             ->where('status', 'completed')
             ->whereBetween('updated_at', [$startOfWeek, $endOfWeek])
             ->count();
-        
+
         $weeklyProgress = round(($weekCompleted / $weeklyGoal) * 100, 1);
         $weeklyProgress = min($weeklyProgress, 100); // Máximo 100%
 
@@ -1181,13 +1183,13 @@ class TaskController extends Controller
                 ->where('status', 'completed')
                 ->whereDate('updated_at', $date->toDateString())
                 ->count();
-            
+
             $last7Days[] = [
                 'date' => $date->format('d/m'),
                 'day' => $date->format('D'),
                 'total' => $dayTasks,
                 'completed' => $dayCompleted,
-                'productivity' => $dayTasks > 0 ? round(($dayCompleted / $dayTasks) * 100, 1) : 0
+                'productivity' => $dayTasks > 0 ? round(($dayCompleted / $dayTasks) * 100, 1) : 0,
             ];
         }
 
@@ -1266,7 +1268,7 @@ class TaskController extends Controller
         // Verificar os últimos 30 dias para encontrar o streak
         for ($i = 0; $i < 30; $i++) {
             $date = $currentDate->copy()->subDays($i);
-            
+
             $dayCompleted = Task::where('created_by', $userId)
                 ->where('status', 'completed')
                 ->whereDate('updated_at', $date->toDateString())
@@ -1287,7 +1289,7 @@ class TaskController extends Controller
         $maxOrder = Task::where('created_by', Auth::id())
             ->where('parent_task_id', $parentTaskId)
             ->max('order');
-        
+
         return ($maxOrder ?? 0) + 1;
     }
 
@@ -1347,7 +1349,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'tasks' => $tasks
+            'tasks' => $tasks,
         ]);
     }
 
@@ -1384,7 +1386,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Tarefa criada com sucesso!',
-            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments'])
+            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments']),
         ], 201);
     }
 
@@ -1399,7 +1401,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments'])
+            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments']),
         ]);
     }
 
@@ -1428,7 +1430,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Tarefa atualizada com sucesso!',
-            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments'])
+            'task' => $task->load(['assignedTo', 'subtasks', 'attachments', 'comments']),
         ]);
     }
 
@@ -1450,7 +1452,7 @@ class TaskController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Status da tarefa atualizado com sucesso!',
-            'task' => $task
+            'task' => $task,
         ]);
     }
 
@@ -1467,7 +1469,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Tarefa excluída com sucesso!'
+            'message' => 'Tarefa excluída com sucesso!',
         ]);
     }
 
@@ -1536,7 +1538,7 @@ class TaskController extends Controller
             'training',
             'maintenance',
             'infrastructure',
-            'security'
+            'security',
         ];
 
         // Categorias existentes no banco
@@ -1552,7 +1554,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'categories' => $allCategories
+            'categories' => $allCategories,
         ]);
     }
 }

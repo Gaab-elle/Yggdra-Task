@@ -5,8 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 
 class LocaleFromUrl
 {
@@ -22,7 +22,7 @@ class LocaleFromUrl
             }
 
             // 3) Valida o locale quando presente
-            if (!in_array($locale, ['pt', 'en'], true)) {
+            if (! in_array($locale, ['pt', 'en'], true)) {
                 abort(404);
             }
 
@@ -38,6 +38,7 @@ class LocaleFromUrl
         } catch (\Exception $e) {
             // Log do erro e continua
             \Log::error('LocaleFromUrl middleware error: ' . $e->getMessage());
+
             return $next($request);
         }
     }

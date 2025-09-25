@@ -10,7 +10,7 @@ class HolidayController extends Controller
     public function check(Request $request, HolidayService $holidays)
     {
         $request->validate([
-            'date'  => ['required','date'], // Y-m-d
+            'date' => ['required','date'], // Y-m-d
             'state' => ['nullable','string','size:2'],
         ]);
 
@@ -18,7 +18,7 @@ class HolidayController extends Controller
 
         return response()->json([
             'is_holiday' => (bool)$hit,
-            'holiday'    => $hit, // null ou objeto {date,name,type,...}
+            'holiday' => $hit, // null ou objeto {date,name,type,...}
         ]);
     }
 }

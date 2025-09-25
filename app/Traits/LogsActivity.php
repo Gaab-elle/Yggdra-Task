@@ -4,9 +4,8 @@ namespace App\Traits;
 
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Log;
-use \Exception;
+use Illuminate\Support\Facades\Request;
 
 trait LogsActivity
 {
@@ -22,7 +21,7 @@ trait LogsActivity
                 // Log do erro mas não interromper a funcionalidade
                 Log::warning('Erro ao logar criação da tarefa: ' . $e->getMessage(), [
                     'task_id' => $model->id ?? 'unknown',
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         });
@@ -32,21 +31,21 @@ trait LogsActivity
                 // Obter valores originais e atuais de forma segura
                 $originalValues = $model->getOriginal();
                 $currentValues = $model->getAttributes();
-                
+
                 // Filtrar valores sensíveis e garantir que sejam arrays válidos
                 $originalValues = is_array($originalValues) ? $originalValues : [];
                 $currentValues = is_array($currentValues) ? $currentValues : [];
-                
+
                 // Verificar se há mudanças reais antes de logar
                 $changes = array_diff_assoc($currentValues, $originalValues);
-                if (!empty($changes)) {
+                if (! empty($changes)) {
                     $model->logActivity('updated', 'Tarefa atualizada', $originalValues, $currentValues);
                 }
             } catch (\Exception $e) {
                 // Log do erro mas não interromper a funcionalidade
                 Log::warning('Erro ao logar atualização da tarefa: ' . $e->getMessage(), [
                     'task_id' => $model->id ?? 'unknown',
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         });
@@ -56,12 +55,12 @@ trait LogsActivity
                 // Capturar o ID da tarefa ANTES da exclusão
                 $taskId = $model->id;
                 $userId = Auth::user()->id ?? null;
-                
+
                 if ($userId) {
                     // Obter atributos de forma segura
                     $attributes = $model->getAttributes();
                     $oldValues = is_array($attributes) ? $attributes : [];
-                    
+
                     ActivityLog::create([
                         'user_id' => $userId,
                         'task_id' => $taskId,
@@ -70,14 +69,14 @@ trait LogsActivity
                         'old_values' => $oldValues,
                         'new_values' => null,
                         'ip_address' => Request::ip(),
-                        'user_agent' => Request::userAgent()
+                        'user_agent' => Request::userAgent(),
                     ]);
                 }
             } catch (\Exception $e) {
                 // Log do erro mas não interromper a exclusão
                 Log::warning('Erro ao logar exclusão da tarefa: ' . $e->getMessage(), [
                     'task_id' => $model->id ?? 'unknown',
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         });
@@ -89,7 +88,7 @@ trait LogsActivity
     public function logActivity($action, $description, $oldValues = null, $newValues = null)
     {
         try {
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 return;
             }
 
@@ -107,19 +106,19 @@ trait LogsActivity
             // Detectar mudanças específicas
             try {
                 $changes = array_diff_assoc($newValues, $oldValues);
-                
+
                 if (isset($changes['status'])) {
                     $this->createSpecificLog($userId, $taskId, 'status_changed', 'Status alterado', $oldValues, $newValues);
                 }
-                
+
                 if (isset($changes['priority'])) {
                     $this->createSpecificLog($userId, $taskId, 'priority_changed', 'Prioridade alterada', $oldValues, $newValues);
                 }
-                
+
                 if (isset($changes['assigned_to'])) {
                     $this->createSpecificLog($userId, $taskId, 'assigned', 'Tarefa atribuída', $oldValues, $newValues);
                 }
-                
+
                 if (isset($changes['status']) && $changes['status'] === 'completed') {
                     $this->createSpecificLog($userId, $taskId, 'completed', 'Tarefa concluída', $oldValues, $newValues);
                 }
@@ -128,19 +127,19 @@ trait LogsActivity
                 Log::warning('Erro ao detectar mudanças na atividade: ' . $e->getMessage(), [
                     'task_id' => $taskId,
                     'old_values' => $oldValues,
-                    'new_values' => $newValues
+                    'new_values' => $newValues,
                 ]);
             }
 
             // Log geral
             $this->createSpecificLog($userId, $taskId, $action, $description, $oldValues, $newValues);
-            
+
         } catch (\Exception $e) {
             // Log do erro geral mas não interromper a funcionalidade
             Log::warning('Erro geral ao logar atividade: ' . $e->getMessage(), [
                 'action' => $action,
                 'description' => $description,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -154,17 +153,18 @@ trait LogsActivity
             // Garantir que os valores sejam arrays válidos ou null
             $oldValuesData = is_array($oldValues) ? $oldValues : null;
             $newValuesData = is_array($newValues) ? $newValues : null;
-            
+
             // Validar dados antes de criar o log
-            if (!$userId || !$taskId) {
+            if (! $userId || ! $taskId) {
                 Log::warning('Dados inválidos para criar log de atividade', [
                     'user_id' => $userId,
                     'task_id' => $taskId,
-                    'action' => $action
+                    'action' => $action,
                 ]);
+
                 return;
             }
-            
+
             ActivityLog::create([
                 'user_id' => $userId,
                 'task_id' => $taskId,
@@ -173,16 +173,16 @@ trait LogsActivity
                 'old_values' => $oldValuesData,
                 'new_values' => $newValuesData,
                 'ip_address' => Request::ip(),
-                'user_agent' => Request::userAgent()
+                'user_agent' => Request::userAgent(),
             ]);
-            
+
         } catch (\Exception $e) {
             // Log do erro mas não interromper a funcionalidade
             Log::warning('Erro ao criar log de atividade específico: ' . $e->getMessage(), [
                 'user_id' => $userId,
                 'task_id' => $taskId,
                 'action' => $action,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -194,12 +194,12 @@ trait LogsActivity
     {
         try {
             // Se não há dados, retornar array vazio
-            if (!$data) {
+            if (! $data) {
                 return [];
             }
-            
+
             // Se não é array, tentar converter ou retornar array vazio
-            if (!is_array($data)) {
+            if (! is_array($data)) {
                 // Se for string, tentar decodificar JSON
                 if (is_string($data)) {
                     $decoded = json_decode($data, true);
@@ -214,18 +214,19 @@ trait LogsActivity
             }
 
             $sensitiveFields = ['password', 'remember_token', 'email_verified_at'];
-            
+
             $filtered = array_diff_key($data, array_flip($sensitiveFields));
-            
+
             // Sempre retornar array, mesmo que vazio
             return is_array($filtered) ? $filtered : [];
-            
+
         } catch (\Exception $e) {
             // Log do erro e retornar array vazio
             Log::warning('Erro ao filtrar dados sensíveis: ' . $e->getMessage(), [
                 'data_type' => gettype($data),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return [];
         }
     }
@@ -249,4 +250,4 @@ trait LogsActivity
             ->limit($limit)
             ->get();
     }
-} 
+}

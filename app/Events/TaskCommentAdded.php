@@ -5,7 +5,6 @@ namespace App\Events;
 use App\Models\Task;
 use App\Models\TaskComment;
 use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -14,7 +13,9 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskCommentAdded implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $task;
     public $comment;
@@ -45,7 +46,7 @@ class TaskCommentAdded implements ShouldBroadcast
         }
 
         // Se quem comentou não é nem o responsável nem o criador, notificar também
-        if ($this->commentedBy->id !== $this->task->user_id && 
+        if ($this->commentedBy->id !== $this->task->user_id &&
             $this->commentedBy->id !== $this->task->created_by) {
             $channels[] = new PrivateChannel('user.' . $this->commentedBy->id);
         }

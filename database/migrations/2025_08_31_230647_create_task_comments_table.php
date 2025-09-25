@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->json('mentions')->nullable(); // IDs de usuários mencionados
             $table->boolean('is_pinned')->default(false);
             $table->timestamps();
-            
+
             $table->index(['task_id', 'created_at']);
             $table->index(['user_id', 'created_at']);
             $table->index(['is_pinned', 'created_at']);

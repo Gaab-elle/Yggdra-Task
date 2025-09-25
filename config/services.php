@@ -42,7 +42,7 @@ return [
     ],
 
     'invertexto' => [
-        'base'  => env('INVERTEXTO_BASE', 'https://api.invertexto.com'),
+        'base' => env('INVERTEXTO_BASE', 'https://api.invertexto.com'),
         'token' => env('INVERTEXTO_TOKEN'),
     ],
 

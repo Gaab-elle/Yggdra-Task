@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class LanguageController extends Controller
 {
@@ -22,18 +22,18 @@ class LanguageController extends Controller
     {
         // Log para debug
         \Log::info("LanguageController::switch called with locale: {$locale}");
-        
+
         // Validar se o idioma é suportado
-        if (!in_array($locale, $this->supportedLocales)) {
+        if (! in_array($locale, $this->supportedLocales)) {
             return Redirect::back()->withErrors(['language' => 'Idioma não suportado.']);
         }
 
         // Salvar idioma na sessão
         Session::put('locale', $locale);
-        
+
         // Definir o idioma da aplicação para esta requisição
         App::setLocale($locale);
-        
+
         \Log::info("LanguageController::switch: Set locale to {$locale} and saved to session");
 
         // Retornar resposta JSON para Vue.js
@@ -41,7 +41,7 @@ class LanguageController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Idioma alterado com sucesso!',
-                'locale' => $locale
+                'locale' => $locale,
             ]);
         }
 
@@ -55,23 +55,23 @@ class LanguageController extends Controller
     {
         // Verificar se há idioma na sessão
         $sessionLocale = Session::get('locale');
-        
+
         // Se não há locale na sessão, usar o padrão da configuração
-        if (!$sessionLocale || !in_array($sessionLocale, $this->supportedLocales)) {
+        if (! $sessionLocale || ! in_array($sessionLocale, $this->supportedLocales)) {
             $sessionLocale = config('app.locale', 'en');
         }
-        
+
         // Definir o idioma da aplicação
         App::setLocale($sessionLocale);
-        
+
         $currentLocale = App::getLocale();
-        
+
         \Log::info("LanguageController::current: App locale: {$currentLocale}, Session locale: {$sessionLocale}");
-        
+
         return response()->json([
             'locale' => $currentLocale,
             'session_locale' => $sessionLocale,
-            'supported_locales' => $this->supportedLocales
+            'supported_locales' => $this->supportedLocales,
         ]);
     }
 
@@ -80,13 +80,13 @@ class LanguageController extends Controller
      */
     public function translations(string $locale)
     {
-        if (!in_array($locale, $this->supportedLocales)) {
+        if (! in_array($locale, $this->supportedLocales)) {
             return response()->json(['error' => 'Idioma não suportado'], 400);
         }
 
         // Carregar traduções do arquivo de idioma
         $translations = [];
-        
+
         if ($locale === 'pt') {
             $translations = [
                 'task_system' => 'Sistema de Tarefas',
@@ -157,12 +157,12 @@ class LanguageController extends Controller
     {
         // Verificar se há idioma na sessão
         $sessionLocale = Session::get('locale');
-        
+
         // Se não há locale na sessão, usar o padrão da configuração
-        if (!$sessionLocale || !in_array($sessionLocale, $this->supportedLocales)) {
+        if (! $sessionLocale || ! in_array($sessionLocale, $this->supportedLocales)) {
             $sessionLocale = config('app.locale', 'en');
         }
-        
+
         return $sessionLocale;
     }
 }

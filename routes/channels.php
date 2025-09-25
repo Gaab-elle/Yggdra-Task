@@ -30,6 +30,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('task.{id}', function ($user, $id) {
     // Verificar se o usuário tem acesso à tarefa
     $task = \App\Models\Task::find($id);
+
     return $task && ($task->user_id === $user->id || $user->hasRole('admin'));
 });
 
@@ -48,9 +49,9 @@ Broadcast::channel('online-users', function ($user) {
     \Log::info('Canal de presença online-users acessado', [
         'user_id' => $user->id,
         'user_name' => $user->name,
-        'user_email' => $user->email
+        'user_email' => $user->email,
     ]);
-    
+
     return [
         'id' => $user->id,
         'name' => $user->name,

@@ -6,7 +6,6 @@ use App\Mail\UserRegisteredMail;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 
 class TestEmailCommand extends Command
 {
@@ -30,11 +29,12 @@ class TestEmailCommand extends Command
     public function handle()
     {
         $email = $this->argument('email') ?? 'tdrummontt@gmail.com';
-        
+
         $this->info("🧪 Testando envio de email para: {$email}");
-        
+
         // Teste 1: Email simples
         $this->info("📧 Teste 1: Email simples...");
+
         try {
             Mail::raw('Este é um teste de email do Task Force. Se você recebeu este email, o sistema está funcionando corretamente!', function ($message) use ($email) {
                 $message->to($email)
@@ -43,11 +43,13 @@ class TestEmailCommand extends Command
             $this->info("✅ Email simples enviado com sucesso!");
         } catch (\Exception $e) {
             $this->error("❌ Erro no email simples: " . $e->getMessage());
+
             return 1;
         }
-        
+
         // Teste 2: Email com template
         $this->info("📧 Teste 2: Email com template...");
+
         try {
             $user = User::first();
             if ($user) {
@@ -59,7 +61,7 @@ class TestEmailCommand extends Command
         } catch (\Exception $e) {
             $this->error("❌ Erro no email com template: " . $e->getMessage());
         }
-        
+
         // Teste 3: Verificar configuração
         $this->info("🔧 Teste 3: Verificando configuração...");
         $this->table(
@@ -74,13 +76,13 @@ class TestEmailCommand extends Command
                 ['MAIL_FROM_NAME', config('mail.from.name')],
             ]
         );
-        
+
         $this->info("🎯 Verifique sua caixa de entrada e pasta de spam!");
         $this->info("📝 Se não receber os emails, verifique:");
         $this->line("   - Senha de aplicativo do Gmail está correta");
         $this->line("   - Verificação em duas etapas está ativada");
         $this->line("   - Emails não estão indo para spam");
-        
+
         return 0;
     }
 }

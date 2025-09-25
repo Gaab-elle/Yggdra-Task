@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
-        
+
         // Habilitar broadcasting para canais privados com autenticação web
         Broadcast::routes(['middleware' => ['auth']]);
     }

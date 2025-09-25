@@ -2,11 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             // Adicionar coluna user_id como nullable primeiro
-            if (!Schema::hasColumn('tasks', 'user_id')) {
+            if (! Schema::hasColumn('tasks', 'user_id')) {
                 $table->foreignId('user_id')->nullable()->after('id')->constrained()->onDelete('cascade');
             }
-            
+
             // Adicionar índice para performance
             $table->index(['user_id', 'created_at']);
         });

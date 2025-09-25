@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\TaskAttachment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 
 class TaskAttachmentController extends Controller
 {
@@ -16,7 +15,7 @@ class TaskAttachmentController extends Controller
     {
         $request->validate([
             'file' => 'required|file|max:10240', // 10MB max
-            'description' => 'nullable|string|max:255'
+            'description' => 'nullable|string|max:255',
         ]);
 
         $file = $request->file('file');
@@ -31,19 +30,19 @@ class TaskAttachmentController extends Controller
             'file_path' => $filePath,
             'file_type' => $file->getMimeType(),
             'file_size' => $file->getSize(),
-            'description' => $request->description
+            'description' => $request->description,
         ]);
 
         return response()->json([
             'success' => true,
             'attachment' => $attachment->load('user'),
-            'message' => 'Anexo adicionado com sucesso!'
+            'message' => 'Anexo adicionado com sucesso!',
         ]);
     }
 
     public function download($locale, TaskAttachment $attachment)
     {
-        if (!Storage::disk('public')->exists($attachment->file_path)) {
+        if (! Storage::disk('public')->exists($attachment->file_path)) {
             abort(404, 'Arquivo não encontrado');
         }
 
@@ -55,7 +54,7 @@ class TaskAttachmentController extends Controller
 
     public function destroy($locale, TaskAttachment $attachment)
     {
-        if ($attachment->user_id !== Auth::id() && !Auth::user()->hasRole('admin')) {
+        if ($attachment->user_id !== Auth::id() && ! Auth::user()->hasRole('admin')) {
             abort(403, 'Você não tem permissão para excluir este anexo');
         }
 
@@ -63,7 +62,7 @@ class TaskAttachmentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Anexo excluído com sucesso!'
+            'message' => 'Anexo excluído com sucesso!',
         ]);
     }
 
@@ -72,7 +71,7 @@ class TaskAttachmentController extends Controller
         $attachments = $task->attachments()->with('user')->orderBy('created_at', 'desc')->get();
 
         return response()->json([
-            'attachments' => $attachments
+            'attachments' => $attachments,
         ]);
     }
 }

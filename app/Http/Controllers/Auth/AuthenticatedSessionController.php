@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,30 +39,31 @@ class AuthenticatedSessionController extends Controller
         $user = Auth::user();
         $ipAddress = $request->ip();
         $userAgent = $request->userAgent();
-        
+
         try {
             $user->notify(new UserLoginNotification($user, $ipAddress, $userAgent));
-            
+
             // Adicionar mensagem de sucesso para o snackbar
             session()->flash('email_sent', [
                 'type' => 'success',
                 'title' => 'Notificação de Login Enviada',
-                'message' => "Notificação de login enviada para {$user->email}"
+                'message' => "Notificação de login enviada para {$user->email}",
             ]);
-            
+
         } catch (\Exception $e) {
             // Log do erro mas não interrompe o login
             Log::error('Erro ao enviar notificação de login: ' . $e->getMessage());
-            
+
             // Adicionar mensagem de erro para o snackbar
             session()->flash('email_error', [
                 'type' => 'error',
                 'title' => 'Erro na Notificação de Login',
-                'message' => 'Não foi possível enviar a notificação de login'
+                'message' => 'Não foi possível enviar a notificação de login',
             ]);
         }
 
         $locale = $request->attributes->get('locale', app()->getLocale() ?: config('app.locale', 'pt'));
+
         return redirect()->intended(route('dashboard', ['locale' => $locale], false));
     }
 
@@ -79,6 +79,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         $locale = $request->attributes->get('locale', app()->getLocale() ?: config('app.locale', 'pt'));
+
         return redirect()->route('welcome', ['locale' => $locale]);
     }
 }

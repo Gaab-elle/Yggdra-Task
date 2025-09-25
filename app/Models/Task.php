@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\LogsActivity;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-use App\Traits\LogsActivity;
 
 class Task extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
 
     protected $fillable = [
@@ -27,7 +28,7 @@ class Task extends Model
         'order',
         'assigned_to',
         'created_by',
-        'user_id'
+        'user_id',
     ];
 
     protected $casts = [
@@ -101,6 +102,7 @@ class Task extends Model
         if (is_array($tags)) {
             return $query->whereJsonContains('tags', $tags);
         }
+
         return $query->whereJsonContains('tags', [$tags]);
     }
 
@@ -187,7 +189,7 @@ class Task extends Model
             'overdue' => 'red',
             'due_today' => 'yellow',
             'due_soon' => 'orange',
-            'normal' => 'gray'
+            'normal' => 'gray',
         ];
 
         return $colors[$this->due_status] ?? 'gray';
@@ -200,7 +202,7 @@ class Task extends Model
             'overdue' => 'Atrasada',
             'due_today' => 'Vence hoje',
             'due_soon' => 'Vence em breve',
-            'normal' => 'No prazo'
+            'normal' => 'No prazo',
         ];
 
         return $labels[$this->due_status] ?? 'Normal';
@@ -210,18 +212,22 @@ class Task extends Model
     {
         if ($this->subtasks->count() > 0) {
             $completedSubtasks = $this->subtasks->where('status', 'completed')->count();
+
             return round(($completedSubtasks / $this->subtasks->count()) * 100);
         }
+
         return $this->status === 'completed' ? 100 : 0;
     }
 
     public function getEstimatedTimeFormattedAttribute()
     {
-        if (!$this->estimated_hours) return null;
-        
+        if (! $this->estimated_hours) {
+            return null;
+        }
+
         $hours = floor($this->estimated_hours / 60);
         $minutes = $this->estimated_hours % 60;
-        
+
         if ($hours > 0 && $minutes > 0) {
             return "{$hours}h {$minutes}min";
         } elseif ($hours > 0) {
@@ -233,11 +239,13 @@ class Task extends Model
 
     public function getActualTimeFormattedAttribute()
     {
-        if (!$this->actual_hours) return null;
-        
+        if (! $this->actual_hours) {
+            return null;
+        }
+
         $hours = floor($this->actual_hours / 60);
         $minutes = $this->actual_hours % 60;
-        
+
         if ($hours > 0 && $minutes > 0) {
             return "{$hours}h {$minutes}min";
         } elseif ($hours > 0) {
@@ -249,12 +257,14 @@ class Task extends Model
 
     public function getTagsFormattedAttribute()
     {
-        if (!$this->tags) return [];
-        
+        if (! $this->tags) {
+            return [];
+        }
+
         return array_map(function ($tag) {
             return [
                 'name' => $tag,
-                'color' => $this->getTagColor($tag)
+                'color' => $this->getTagColor($tag),
             ];
         }, $this->tags);
     }
@@ -272,7 +282,7 @@ class Task extends Model
 
     public function isDueSoon($days = 3)
     {
-        return $this->due_date && 
+        return $this->due_date &&
                $this->due_date->isBetween(Carbon::today(), Carbon::today()->addDays($days));
     }
 
@@ -283,7 +293,7 @@ class Task extends Model
 
     public function isSubtask()
     {
-        return !is_null($this->parent_task_id);
+        return ! is_null($this->parent_task_id);
     }
 
     public function hasSubtasks()
@@ -304,7 +314,7 @@ class Task extends Model
     public function addTag($tag)
     {
         $tags = $this->tags ?? [];
-        if (!in_array($tag, $tags)) {
+        if (! in_array($tag, $tags)) {
             $tags[] = $tag;
             $this->update(['tags' => $tags]);
         }
@@ -337,7 +347,7 @@ class Task extends Model
             'documentação' => 'green',
             'design' => 'purple',
             'teste' => 'yellow',
-            'deploy' => 'indigo'
+            'deploy' => 'indigo',
         ];
 
         return $colors[strtolower($tag)] ?? 'gray';
@@ -345,8 +355,8 @@ class Task extends Model
 
     public function canEdit($user)
     {
-        return $this->created_by === $user->id || 
-               $this->assigned_to === $user->id || 
+        return $this->created_by === $user->id ||
+               $this->assigned_to === $user->id ||
                $user->hasRole('admin');
     }
 

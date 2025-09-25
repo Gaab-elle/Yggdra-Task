@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
-use App\Models\ActivityLog;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -18,7 +15,7 @@ class NotificationController extends Controller
     public function apiIndex(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         // Buscar notificações do usuário
         $notifications = DB::table('notifications')
             ->where('notifiable_type', User::class)
@@ -28,6 +25,7 @@ class NotificationController extends Controller
             ->get()
             ->map(function ($notification) {
                 $data = json_decode($notification->data, true);
+
                 return [
                     'id' => $notification->id,
                     'title' => $data['title'] ?? 'Notificação',
@@ -35,13 +33,13 @@ class NotificationController extends Controller
                     'type' => $data['type'] ?? 'info',
                     'created_at' => $notification->created_at,
                     'read_at' => $notification->read_at,
-                    'data' => $data
+                    'data' => $data,
                 ];
             });
 
         return response()->json([
             'success' => true,
-            'notifications' => $notifications
+            'notifications' => $notifications,
         ]);
     }
 
@@ -51,7 +49,7 @@ class NotificationController extends Controller
     public function apiMarkAsRead(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         $updated = DB::table('notifications')
             ->where('id', $id)
             ->where('notifiable_type', User::class)
@@ -61,13 +59,13 @@ class NotificationController extends Controller
         if ($updated) {
             return response()->json([
                 'success' => true,
-                'message' => 'Notificação marcada como lida'
+                'message' => 'Notificação marcada como lida',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Notificação não encontrada'
+            'message' => 'Notificação não encontrada',
         ], 404);
     }
 
@@ -77,7 +75,7 @@ class NotificationController extends Controller
     public function apiMarkAllAsRead(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         DB::table('notifications')
             ->where('notifiable_type', User::class)
             ->where('notifiable_id', $user->id)
@@ -86,7 +84,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Todas as notificações foram marcadas como lidas'
+            'message' => 'Todas as notificações foram marcadas como lidas',
         ]);
     }
 
@@ -96,7 +94,7 @@ class NotificationController extends Controller
     public function apiClearAll(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         DB::table('notifications')
             ->where('notifiable_type', User::class)
             ->where('notifiable_id', $user->id)
@@ -104,7 +102,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Todas as notificações foram removidas'
+            'message' => 'Todas as notificações foram removidas',
         ]);
     }
 
@@ -114,7 +112,7 @@ class NotificationController extends Controller
     public function apiDelete(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         $deleted = DB::table('notifications')
             ->where('id', $id)
             ->where('notifiable_type', User::class)
@@ -124,13 +122,13 @@ class NotificationController extends Controller
         if ($deleted) {
             return response()->json([
                 'success' => true,
-                'message' => 'Notificação removida'
+                'message' => 'Notificação removida',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Notificação não encontrada'
+            'message' => 'Notificação não encontrada',
         ], 404);
     }
 
@@ -140,7 +138,7 @@ class NotificationController extends Controller
     public function apiUnreadCount(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $count = DB::table('notifications')
             ->where('notifiable_type', User::class)
             ->where('notifiable_id', $user->id)
@@ -149,7 +147,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'count' => $count
+            'count' => $count,
         ]);
     }
 
@@ -159,7 +157,7 @@ class NotificationController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         // Buscar notificações do usuário
         $notifications = DB::table('notifications')
             ->where('notifiable_type', User::class)
@@ -169,6 +167,7 @@ class NotificationController extends Controller
             ->get()
             ->map(function ($notification) {
                 $data = json_decode($notification->data, true);
+
                 return [
                     'id' => $notification->id,
                     'title' => $data['title'] ?? 'Notificação',
@@ -176,13 +175,13 @@ class NotificationController extends Controller
                     'type' => $data['type'] ?? 'info',
                     'created_at' => $notification->created_at,
                     'read_at' => $notification->read_at,
-                    'data' => $data
+                    'data' => $data,
                 ];
             });
 
         return response()->json([
             'success' => true,
-            'notifications' => $notifications
+            'notifications' => $notifications,
         ]);
     }
 
@@ -192,7 +191,7 @@ class NotificationController extends Controller
     public function markAsRead(Request $request, $id): JsonResponse
     {
         $user = $request->user();
-        
+
         $updated = DB::table('notifications')
             ->where('id', $id)
             ->where('notifiable_type', User::class)
@@ -202,13 +201,13 @@ class NotificationController extends Controller
         if ($updated) {
             return response()->json([
                 'success' => true,
-                'message' => 'Notificação marcada como lida'
+                'message' => 'Notificação marcada como lida',
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => 'Notificação não encontrada'
+            'message' => 'Notificação não encontrada',
         ], 404);
     }
 
@@ -218,7 +217,7 @@ class NotificationController extends Controller
     public function clearAll(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         DB::table('notifications')
             ->where('notifiable_type', User::class)
             ->where('notifiable_id', $user->id)
@@ -226,7 +225,7 @@ class NotificationController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Todas as notificações foram removidas'
+            'message' => 'Todas as notificações foram removidas',
         ]);
     }
-} 
+}

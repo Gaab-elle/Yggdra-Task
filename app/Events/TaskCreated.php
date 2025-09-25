@@ -4,7 +4,6 @@ namespace App\Events;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -13,7 +12,9 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskCreated implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $task;
     public $createdBy;
@@ -25,10 +26,10 @@ class TaskCreated implements ShouldBroadcast
     {
         $this->task = $task;
         $this->createdBy = $createdBy;
-        
+
         \Log::info('🎯 TaskCreated event constructor called', [
             'task_id' => $task->id,
-            'created_by' => $createdBy->id
+            'created_by' => $createdBy->id,
         ]);
     }
 
@@ -47,9 +48,9 @@ class TaskCreated implements ShouldBroadcast
         }
 
         \Log::info('🎯 TaskCreated broadcastOn called', [
-            'channels' => array_map(fn($channel) => $channel->name, $channels),
+            'channels' => array_map(fn ($channel) => $channel->name, $channels),
             'task_id' => $this->task->id,
-            'created_by' => $this->createdBy->id
+            'created_by' => $this->createdBy->id,
         ]);
 
         return $channels;

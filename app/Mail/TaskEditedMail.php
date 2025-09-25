@@ -13,7 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskEditedMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $task;
     public $editedBy;

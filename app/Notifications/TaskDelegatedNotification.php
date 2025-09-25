@@ -2,12 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Mail\TaskDelegatedMail;
 use App\Models\Task;
 use App\Models\User;
-use App\Mail\TaskDelegatedMail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
@@ -130,4 +129,4 @@ class TaskDelegatedNotification extends Notification implements ShouldQueue
             default => '⚪'
         };
     }
-} 
+}

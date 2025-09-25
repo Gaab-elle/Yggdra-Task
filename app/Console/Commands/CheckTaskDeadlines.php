@@ -4,9 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\Task;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class CheckTaskDeadlines extends Command
 {
@@ -52,7 +52,7 @@ class CheckTaskDeadlines extends Command
         // Buscar tarefas que vencem em breve
         $dueSoonTasks = Task::whereBetween('due_date', [
                 $now->copy()->addDay()->toDateString(),
-                $deadline->toDateString()
+                $deadline->toDateString(),
             ])
             ->where('status', '!=', 'completed')
             ->with(['creator', 'assignee'])
@@ -77,7 +77,7 @@ class CheckTaskDeadlines extends Command
     {
         $this->newLine();
         $this->info('📊 Resumo dos prazos:');
-        
+
         if ($overdueTasks->isNotEmpty()) {
             $this->error("   ⚠️  {$overdueTasks->count()} tarefa(s) vencida(s):");
             foreach ($overdueTasks as $task) {
@@ -122,7 +122,7 @@ class CheckTaskDeadlines extends Command
 
         foreach ($overdueTasks as $task) {
             $userId = $task->assignee ? $task->assignee->id : $task->creator->id;
-            if (!isset($userTasks[$userId])) {
+            if (! isset($userTasks[$userId])) {
                 $userTasks[$userId] = ['overdue' => [], 'due_today' => [], 'due_soon' => []];
             }
             $userTasks[$userId]['overdue'][] = $task;
@@ -130,7 +130,7 @@ class CheckTaskDeadlines extends Command
 
         foreach ($dueTodayTasks as $task) {
             $userId = $task->assignee ? $task->assignee->id : $task->creator->id;
-            if (!isset($userTasks[$userId])) {
+            if (! isset($userTasks[$userId])) {
                 $userTasks[$userId] = ['overdue' => [], 'due_today' => [], 'due_soon' => []];
             }
             $userTasks[$userId]['due_today'][] = $task;
@@ -138,7 +138,7 @@ class CheckTaskDeadlines extends Command
 
         foreach ($dueSoonTasks as $task) {
             $userId = $task->assignee ? $task->assignee->id : $task->creator->id;
-            if (!isset($userTasks[$userId])) {
+            if (! isset($userTasks[$userId])) {
                 $userTasks[$userId] = ['overdue' => [], 'due_today' => [], 'due_soon' => []];
             }
             $userTasks[$userId]['due_soon'][] = $task;
@@ -146,7 +146,9 @@ class CheckTaskDeadlines extends Command
 
         foreach ($userTasks as $userId => $tasks) {
             $user = User::find($userId);
-            if (!$user) continue;
+            if (! $user) {
+                continue;
+            }
 
             try {
                 $this->sendUserNotification($user, $tasks);
@@ -156,7 +158,7 @@ class CheckTaskDeadlines extends Command
                 $this->error("   ❌ Erro ao enviar notificação para {$user->name}: {$e->getMessage()}");
                 Log::error("Erro ao enviar notificação de prazo", [
                     'user_id' => $userId,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -171,10 +173,10 @@ class CheckTaskDeadlines extends Command
     {
         // Simular envio de notificação
         // Em um ambiente real, aqui você enviaria email, push notification, etc.
-        
+
         $message = "Olá {$user->name},\n\n";
-        
-        if (!empty($tasks['overdue'])) {
+
+        if (! empty($tasks['overdue'])) {
             $message .= "⚠️  Você tem " . count($tasks['overdue']) . " tarefa(s) vencida(s):\n";
             foreach ($tasks['overdue'] as $task) {
                 $message .= "   • {$task->title} (Venceu em " . $task->due_date->format('d/m/Y') . ")\n";
@@ -182,7 +184,7 @@ class CheckTaskDeadlines extends Command
             $message .= "\n";
         }
 
-        if (!empty($tasks['due_today'])) {
+        if (! empty($tasks['due_today'])) {
             $message .= "⏰ Você tem " . count($tasks['due_today']) . " tarefa(s) que vence(m) hoje:\n";
             foreach ($tasks['due_today'] as $task) {
                 $message .= "   • {$task->title} (Prioridade: " . $this->getPriorityLabel($task->priority) . ")\n";
@@ -190,7 +192,7 @@ class CheckTaskDeadlines extends Command
             $message .= "\n";
         }
 
-        if (!empty($tasks['due_soon'])) {
+        if (! empty($tasks['due_soon'])) {
             $message .= "📅 Você tem " . count($tasks['due_soon']) . " tarefa(s) que vence(m) em breve:\n";
             foreach ($tasks['due_soon'] as $task) {
                 $message .= "   • {$task->title} (Vence em " . $task->due_date->format('d/m/Y') . ")\n";
@@ -205,7 +207,7 @@ class CheckTaskDeadlines extends Command
         Log::info("Notificação de prazo enviada", [
             'user_id' => $user->id,
             'user_email' => $user->email,
-            'message' => $message
+            'message' => $message,
         ]);
 
         // Simular delay de envio
@@ -221,7 +223,7 @@ class CheckTaskDeadlines extends Command
             'overdue_count' => $overdueTasks->count(),
             'due_today_count' => $dueTodayTasks->count(),
             'due_soon_count' => $dueSoonTasks->count(),
-            'total_checked' => $overdueTasks->count() + $dueTodayTasks->count() + $dueSoonTasks->count()
+            'total_checked' => $overdueTasks->count() + $dueTodayTasks->count() + $dueSoonTasks->count(),
         ]);
     }
 
@@ -237,4 +239,4 @@ class CheckTaskDeadlines extends Command
             default => $priority
         };
     }
-} 
+}

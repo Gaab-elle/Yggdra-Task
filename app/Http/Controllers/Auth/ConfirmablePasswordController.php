@@ -37,6 +37,7 @@ class ConfirmablePasswordController extends Controller
         $request->session()->put('auth.password_confirmed_at', time());
 
         $locale = $request->attributes->get('locale', app()->getLocale() ?: config('app.locale', 'pt'));
+
         return redirect()->intended(route('dashboard', ['locale' => $locale], false));
     }
 }

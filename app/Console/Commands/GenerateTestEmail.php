@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Mail\TaskCreatedMail;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -32,9 +31,9 @@ class GenerateTestEmail extends Command
         // Criar um usuário fictício para o teste
         $user = new User([
             'name' => 'Usuário Teste',
-            'email' => 'teste@taskforce.com'
+            'email' => 'teste@taskforce.com',
         ]);
-        
+
         // Criar uma tarefa fictícia para o teste
         $task = new Task();
         $task->id = 999;
@@ -47,29 +46,29 @@ class GenerateTestEmail extends Command
         $task->estimated_hours = 2;
         $task->tags = ['teste', 'interface', 'email'];
         $task->created_at = now();
-        
+
         // Criar um criador fictício
         $creator = new User([
             'name' => 'Sistema TaskForce',
-            'email' => 'sistema@taskforce.com'
+            'email' => 'sistema@taskforce.com',
         ]);
-        
+
         try {
             // Renderizar o template do email
             $html = View::make('emails.tasks.created', [
                 'task' => $task,
                 'creator' => $creator,
-                'user' => $user
+                'user' => $user,
             ])->render();
-            
+
             // Salvar o HTML em um arquivo
             $filename = storage_path('app/email_test.html');
             file_put_contents($filename, $html);
-            
+
             $this->info("✅ Email HTML gerado com sucesso!");
             $this->info("📁 Arquivo salvo em: {$filename}");
             $this->info("🌐 Abra o arquivo no seu navegador para ver o resultado!");
-            
+
         } catch (\Exception $e) {
             $this->error("❌ Erro ao gerar email: " . $e->getMessage());
         }

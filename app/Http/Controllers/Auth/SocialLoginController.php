@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User; // Certifique-se de ter um modelo User
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialLoginController extends Controller
@@ -34,11 +34,12 @@ class SocialLoginController extends Controller
                 'url' => $request->fullUrl(),
                 'code' => $request->get('code'),
                 'state' => $request->get('state'),
-                'error' => $request->get('error')
+                'error' => $request->get('error'),
             ]);
 
             if ($request->has('error')) {
                 Log::error('Erro do Google OAuth', ['error' => $request->get('error')]);
+
                 return redirect('/pt/login')->withErrors(['google_error' => 'Autorização negada pelo Google.']);
             }
 
@@ -48,7 +49,7 @@ class SocialLoginController extends Controller
             // Verifica se o usuário já existe no nosso banco de dados
             $user = User::where('google_id', $googleUser->id)->first();
 
-            if (!$user) {
+            if (! $user) {
                 // Verifica se já existe usuário com mesmo email
                 $user = User::where('email', $googleUser->email)->first();
                 if ($user) {
@@ -78,8 +79,9 @@ class SocialLoginController extends Controller
             Log::error('Erro no callback do Google', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine()
+                'line' => $e->getLine(),
             ]);
+
             return redirect('/pt/login')->withErrors(['google_error' => 'Erro na autenticação com Google.']);
         }
     }

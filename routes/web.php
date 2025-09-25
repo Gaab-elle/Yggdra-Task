@@ -1,22 +1,23 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TaskAttachmentController;
 use App\Http\Controllers\TaskCommentController;
-use App\Http\Controllers\Auth\SocialLoginController;
+use App\Http\Controllers\TaskController;
+use App\Http\Middleware\LocaleFromUrl;
 use App\Notifications\TestBroadcastNotification;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Middleware\LocaleFromUrl;
-use Illuminate\Http\Request;
 
 // Redireciona raiz para /{locale} com base no idioma preferido do navegador
 Route::get('/', function (Request $request) {
     // Detecta o idioma do navegador entre pt/en; se não achar, usa 'pt'
     $pref = $request->getPreferredLanguage(['pt', 'en']) ?: 'pt';
+
     // Se você QUISER forçar sempre PT, troque a linha acima por: $pref = 'pt';
     return redirect("/{$pref}");
 });
@@ -86,7 +87,7 @@ Route::group([
         Route::get('/tasks/export/csv', [TaskController::class, 'exportCsv'])->name('tasks.export.csv');
         Route::get('/tasks/backup', [TaskController::class, 'backup'])->name('tasks.backup');
         Route::post('/tasks/restore', [TaskController::class, 'restore'])->name('tasks.restore');
-        
+
         // Categorias
         Route::get('/tasks/categories', [TaskController::class, 'getCategories'])->name('tasks.categories');
 
@@ -147,11 +148,12 @@ Route::get('/test-google', function () {
 // Rota de teste para notificação WebSocket
 Route::get('/test-notify', function () {
     $user = auth()->user(); // precisa estar logado no navegador
-    if (!$user) {
+    if (! $user) {
         return 'Usuário não está logado';
     }
-    
+
     $user->notify(new TestBroadcastNotification());
+
     return 'Notificação de teste enviada para usuário: ' . $user->name . ' (ID: ' . $user->id . ')';
 })->middleware('auth');
 

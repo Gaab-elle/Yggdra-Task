@@ -18,7 +18,8 @@ class TaskEditedNotification extends Notification implements ShouldQueue
         public User $editedBy,
         public User $recipient,
         public array $changes = []
-    ) {}
+    ) {
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -35,13 +36,13 @@ class TaskEditedNotification extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("Tarefa '{$this->task->title}' foi editada")
             ->view('emails.tasks.edited-gmail', [
                 'task' => $this->task,
                 'editedBy' => $this->editedBy,
                 'recipient' => $this->recipient,
-                'changes' => $this->changes
+                'changes' => $this->changes,
             ]);
     }
 

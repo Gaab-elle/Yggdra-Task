@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -48,7 +47,7 @@ class UserLoginNotification extends Notification
         $loginDate = $this->loginTime->format('d/m/Y');
         $loginHour = $this->loginTime->format('H:i:s');
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->greeting("🔐 Olá {$this->user->name}!")
             ->subject("🔔 Nova Atividade Detectada - Iron Force Tasks")
             ->line("**Detectamos um novo acesso à sua conta Iron Force Tasks.**")
@@ -97,4 +96,4 @@ class UserLoginNotification extends Notification
             'created_at' => now(),
         ];
     }
-} 
+}

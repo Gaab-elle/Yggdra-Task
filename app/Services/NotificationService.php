@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Task;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -26,10 +26,10 @@ class NotificationService
                     'title' => $title,
                     'message' => $message,
                     'type' => $type,
-                    'data' => $data
+                    'data' => $data,
                 ]),
                 'created_at' => now(),
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
         } catch (\Exception $e) {
             Log::error('Erro ao criar notificação: ' . $e->getMessage());
@@ -43,11 +43,11 @@ class NotificationService
     {
         $title = 'Tarefa Atribuída';
         $message = "A tarefa '{$task->title}' foi atribuída para você";
-        
+
         self::createNotification($assignedTo, $title, $message, 'success', [
             'task_id' => $task->id,
             'task_title' => $task->title,
-            'assigned_by' => Auth::user()->name ?? 'Sistema'
+            'assigned_by' => Auth::user()->name ?? 'Sistema',
         ]);
     }
 
@@ -58,11 +58,11 @@ class NotificationService
     {
         $title = 'Tarefa Concluída';
         $message = "A tarefa '{$task->title}' foi marcada como concluída";
-        
+
         self::createNotification($user, $title, $message, 'success', [
             'task_id' => $task->id,
             'task_title' => $task->title,
-            'completed_by' => Auth::user()->name ?? 'Sistema'
+            'completed_by' => Auth::user()->name ?? 'Sistema',
         ]);
     }
 
@@ -73,12 +73,12 @@ class NotificationService
     {
         $title = 'Status Alterado';
         $message = "A tarefa '{$task->title}' mudou de '{$oldStatus}' para '{$newStatus}'";
-        
+
         self::createNotification($user, $title, $message, 'info', [
             'task_id' => $task->id,
             'task_title' => $task->title,
             'old_status' => $oldStatus,
-            'new_status' => $newStatus
+            'new_status' => $newStatus,
         ]);
     }
 
@@ -89,12 +89,12 @@ class NotificationService
     {
         $title = 'Prioridade Alterada';
         $message = "A prioridade da tarefa '{$task->title}' mudou de '{$oldPriority}' para '{$newPriority}'";
-        
+
         self::createNotification($user, $title, $message, 'warning', [
             'task_id' => $task->id,
             'task_title' => $task->title,
             'old_priority' => $oldPriority,
-            'new_priority' => $newPriority
+            'new_priority' => $newPriority,
         ]);
     }
 
@@ -105,10 +105,10 @@ class NotificationService
     {
         $title = 'Nova Tarefa Criada';
         $message = "A tarefa '{$task->title}' foi criada com sucesso";
-        
+
         self::createNotification($creator, $title, $message, 'success', [
             'task_id' => $task->id,
-            'task_title' => $task->title
+            'task_title' => $task->title,
         ]);
     }
 
@@ -119,11 +119,11 @@ class NotificationService
     {
         $title = 'Tarefa Vencendo';
         $message = "A tarefa '{$task->title}' vence em breve";
-        
+
         self::createNotification($user, $title, $message, 'warning', [
             'task_id' => $task->id,
             'task_title' => $task->title,
-            'due_date' => $task->due_date
+            'due_date' => $task->due_date,
         ]);
     }
 
@@ -134,11 +134,11 @@ class NotificationService
     {
         $title = 'Tarefa Vencida';
         $message = "A tarefa '{$task->title}' venceu";
-        
+
         self::createNotification($user, $title, $message, 'error', [
             'task_id' => $task->id,
             'task_title' => $task->title,
-            'due_date' => $task->due_date
+            'due_date' => $task->due_date,
         ]);
     }
 
@@ -149,13 +149,13 @@ class NotificationService
     {
         $title = 'Tarefa Delegada';
         $message = "A tarefa '{$task->title}' foi delegada para você por {$delegatedBy->name}";
-        
+
         self::createNotification($delegatedTo, $title, $message, 'info', [
             'task_id' => $task->id,
             'task_title' => $task->title,
             'delegated_by' => $delegatedBy->name,
             'delegated_by_id' => $delegatedBy->id,
-            'type' => 'task_delegated'
+            'type' => 'task_delegated',
         ]);
     }
-} 
+}

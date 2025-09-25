@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class ActivityLog extends Model
@@ -19,14 +19,14 @@ class ActivityLog extends Model
         'old_values',
         'new_values',
         'ip_address',
-        'user_agent'
+        'user_agent',
     ];
 
     protected $casts = [
         'old_values' => 'array',
         'new_values' => 'array',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     // Relacionamentos
@@ -107,27 +107,27 @@ class ActivityLog extends Model
     public function getFormattedDescription()
     {
         $description = $this->description ?? '';
-        
+
         // Verificar se old_values e new_values existem e são válidos
         if (empty($this->old_values) || empty($this->new_values)) {
             return $description ?: 'Atividade registrada';
         }
-        
+
         try {
             $changes = [];
-            
+
             // Os casts já convertem automaticamente JSON para array
             $oldValues = $this->old_values;
             $newValues = $this->new_values;
-            
+
             // Verificar se os valores são arrays válidos
-            if (is_array($newValues) && is_array($oldValues) && !empty($newValues)) {
+            if (is_array($newValues) && is_array($oldValues) && ! empty($newValues)) {
                 foreach ($newValues as $field => $newValue) {
                     // Pular campos vazios ou nulos
-                    if (empty($field) || is_null($field) || !is_string($field)) {
+                    if (empty($field) || is_null($field) || ! is_string($field)) {
                         continue;
                     }
-                    
+
                     $oldValue = $oldValues[$field] ?? null;
                     if ($oldValue !== $newValue) {
                         try {
@@ -137,44 +137,44 @@ class ActivityLog extends Model
                             Log::warning("Erro ao formatar mudança de campo: {$field}", [
                                 'old_value' => $oldValue,
                                 'new_value' => $newValue,
-                                'error' => $e->getMessage()
+                                'error' => $e->getMessage(),
                             ]);
                             $changes[] = "{$field}: Alterado";
                         }
                     }
                 }
             }
-            
-            if (!empty($changes)) {
+
+            if (! empty($changes)) {
                 $description .= ': ' . implode(', ', array_filter($changes));
             }
         } catch (\Exception $e) {
             // Log do erro geral e retornar descrição básica
             Log::error("Erro ao formatar descrição de atividade", [
                 'activity_id' => $this->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             return $description ?: 'Atividade registrada';
         }
-        
+
         return $description ?: 'Atividade registrada';
     }
 
     private function formatFieldChange($field, $oldValue, $newValue)
     {
         // Validar campo
-        if (empty($field) || !is_string($field)) {
+        if (empty($field) || ! is_string($field)) {
             return 'Campo: Alterado';
         }
-        
+
         $fieldLabels = [
             'title' => 'Título',
             'description' => 'Descrição',
             'status' => 'Status',
             'priority' => 'Prioridade',
             'due_date' => 'Data de Vencimento',
-            'assigned_to' => 'Atribuído a'
+            'assigned_to' => 'Atribuído a',
         ];
 
         $fieldLabel = $fieldLabels[$field] ?? $field;
@@ -183,34 +183,37 @@ class ActivityLog extends Model
             if ($field === 'status') {
                 $oldLabel = $this->getStatusLabel($oldValue);
                 $newLabel = $this->getStatusLabel($newValue);
+
                 return "{$fieldLabel}: {$oldLabel} → {$newLabel}";
             }
 
             if ($field === 'priority') {
                 $oldLabel = $this->getPriorityLabel($oldValue);
                 $newLabel = $this->getPriorityLabel($newValue);
+
                 return "{$fieldLabel}: {$oldLabel} → {$newLabel}";
             }
 
             if ($field === 'due_date') {
                 $oldDate = $oldValue ? Carbon::parse($oldValue)->format('d/m/Y') : 'Nenhuma';
                 $newDate = $newValue ? Carbon::parse($newValue)->format('d/m/Y') : 'Nenhuma';
+
                 return "{$fieldLabel}: {$oldDate} → {$newDate}";
             }
 
             // Tratar arrays e outros tipos de dados
             $oldValueStr = $this->formatValue($oldValue);
             $newValueStr = $this->formatValue($newValue);
-            
+
             return "{$fieldLabel}: {$oldValueStr} → {$newValueStr}";
         } catch (\Exception $e) {
             // Log do erro e retornar mensagem genérica
             Log::warning("Erro ao formatar mudança de campo específico: {$field}", [
                 'old_value' => $oldValue,
                 'new_value' => $newValue,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             return "{$fieldLabel}: Alterado";
         }
     }
@@ -222,47 +225,48 @@ class ActivityLog extends Model
             if ($depth > 3) {
                 return '...';
             }
-            
+
             if (is_array($value)) {
                 // Se for um array simples, tentar converter para string
                 if (empty($value)) {
                     return 'Vazio';
                 }
-                
+
                 // Se for um array associativo, converter para JSON
                 if (array_keys($value) !== range(0, count($value) - 1)) {
                     return json_encode($value, JSON_UNESCAPED_UNICODE);
                 }
-                
+
                 // Se for um array indexado, converter para string separada por vírgula
                 $formattedValues = [];
                 foreach ($value as $item) {
                     $formattedValues[] = $this->formatValue($item, $depth + 1);
                 }
+
                 return implode(', ', $formattedValues);
             }
-            
+
             if (is_null($value)) {
                 return 'Nenhum';
             }
-            
+
             if (is_bool($value)) {
                 return $value ? 'Sim' : 'Não';
             }
-            
+
             if (is_object($value)) {
                 return method_exists($value, '__toString') ? (string) $value : get_class($value);
             }
-            
+
             return (string) $value;
         } catch (\Exception $e) {
             // Log do erro e retornar valor genérico
             Log::warning("Erro ao formatar valor", [
                 'value' => $value,
                 'type' => gettype($value),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
-            
+
             return 'Erro ao formatar';
         }
     }
@@ -272,11 +276,11 @@ class ActivityLog extends Model
         if (is_array($status)) {
             return 'Array';
         }
-        
+
         if (is_null($status)) {
             return 'Nenhum';
         }
-        
+
         return match((string) $status) {
             'pending' => 'Pendente',
             'in_progress' => 'Em Progresso',
@@ -290,11 +294,11 @@ class ActivityLog extends Model
         if (is_array($priority)) {
             return 'Array';
         }
-        
+
         if (is_null($priority)) {
             return 'Nenhum';
         }
-        
+
         return match((string) $priority) {
             'low' => 'Baixa',
             'medium' => 'Média',
@@ -302,4 +306,4 @@ class ActivityLog extends Model
             default => (string) $priority
         };
     }
-} 
+}

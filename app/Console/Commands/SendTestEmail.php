@@ -30,13 +30,13 @@ class SendTestEmail extends Command
     public function handle()
     {
         $email = $this->argument('email');
-        
+
         // Criar um usuário fictício para o teste
         $user = new User([
             'name' => 'Usuário Teste',
-            'email' => $email
+            'email' => $email,
         ]);
-        
+
         // Criar uma tarefa fictícia para o teste
         $task = new Task([
             'id' => 999,
@@ -48,22 +48,22 @@ class SendTestEmail extends Command
             'due_date' => now()->addDays(7),
             'estimated_hours' => 2,
             'tags' => ['teste', 'interface', 'email'],
-            'created_at' => now()
+            'created_at' => now(),
         ]);
-        
+
         // Criar um criador fictício
         $creator = new User([
             'name' => 'Sistema TaskForce',
-            'email' => 'sistema@taskforce.com'
+            'email' => 'sistema@taskforce.com',
         ]);
-        
+
         try {
             // Enviar o email de teste
             Mail::to($email)->send(new TaskCreatedMail($task, $creator, $user));
-            
+
             $this->info("✅ Email de teste enviado com sucesso para: {$email}");
             $this->info("📧 Verifique sua caixa de entrada para ver a nova interface!");
-            
+
         } catch (\Exception $e) {
             $this->error("❌ Erro ao enviar email: " . $e->getMessage());
         }

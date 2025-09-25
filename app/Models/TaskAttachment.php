@@ -18,7 +18,7 @@ class TaskAttachment extends Model
         'file_path',
         'file_type',
         'file_size',
-        'description'
+        'description',
     ];
 
     protected $casts = [
@@ -41,11 +41,11 @@ class TaskAttachment extends Model
     {
         $bytes = $this->file_size;
         $units = ['B', 'KB', 'MB', 'GB'];
-        
+
         for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
             $bytes /= 1024;
         }
-        
+
         return round($bytes, 2) . ' ' . $units[$i];
     }
 
@@ -61,27 +61,46 @@ class TaskAttachment extends Model
             'video' => '🎥',
             'audio' => '🎵',
             'code' => '💻',
-            'default' => '📎'
+            'default' => '📎',
         ];
 
         $type = $this->getFileTypeCategory();
+
         return $icons[$type] ?? $icons['default'];
     }
 
     public function getFileTypeCategoryAttribute()
     {
         $mimeType = $this->file_type;
-        
-        if (str_starts_with($mimeType, 'image/')) return 'image';
-        if (str_starts_with($mimeType, 'application/pdf')) return 'pdf';
-        if (str_starts_with($mimeType, 'text/')) return 'document';
-        if (str_contains($mimeType, 'spreadsheet') || str_contains($mimeType, 'excel')) return 'spreadsheet';
-        if (str_contains($mimeType, 'presentation') || str_contains($mimeType, 'powerpoint')) return 'presentation';
-        if (str_contains($mimeType, 'zip') || str_contains($mimeType, 'rar') || str_contains($mimeType, 'tar')) return 'archive';
-        if (str_starts_with($mimeType, 'video/')) return 'video';
-        if (str_starts_with($mimeType, 'audio/')) return 'audio';
-        if (str_contains($mimeType, 'javascript') || str_contains($mimeType, 'php') || str_contains($mimeType, 'python')) return 'code';
-        
+
+        if (str_starts_with($mimeType, 'image/')) {
+            return 'image';
+        }
+        if (str_starts_with($mimeType, 'application/pdf')) {
+            return 'pdf';
+        }
+        if (str_starts_with($mimeType, 'text/')) {
+            return 'document';
+        }
+        if (str_contains($mimeType, 'spreadsheet') || str_contains($mimeType, 'excel')) {
+            return 'spreadsheet';
+        }
+        if (str_contains($mimeType, 'presentation') || str_contains($mimeType, 'powerpoint')) {
+            return 'presentation';
+        }
+        if (str_contains($mimeType, 'zip') || str_contains($mimeType, 'rar') || str_contains($mimeType, 'tar')) {
+            return 'archive';
+        }
+        if (str_starts_with($mimeType, 'video/')) {
+            return 'video';
+        }
+        if (str_starts_with($mimeType, 'audio/')) {
+            return 'audio';
+        }
+        if (str_contains($mimeType, 'javascript') || str_contains($mimeType, 'php') || str_contains($mimeType, 'python')) {
+            return 'code';
+        }
+
         return 'default';
     }
 
@@ -95,6 +114,7 @@ class TaskAttachment extends Model
         if ($this->file_type_category === 'image') {
             return Storage::url($this->file_path);
         }
+
         return null;
     }
 

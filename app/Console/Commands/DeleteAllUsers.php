@@ -29,17 +29,19 @@ class DeleteAllUsers extends Command
     public function handle()
     {
         $userCount = User::count();
-        
+
         if ($userCount === 0) {
             $this->info('Não há usuários para excluir.');
+
             return 0;
         }
 
         $this->info("Encontrados {$userCount} usuário(s) no banco de dados.");
 
-        if (!$this->option('force')) {
-            if (!$this->confirm('Tem certeza que deseja excluir TODOS os usuários? Esta ação não pode ser desfeita.')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('Tem certeza que deseja excluir TODOS os usuários? Esta ação não pode ser desfeita.')) {
                 $this->info('Operação cancelada.');
+
                 return 0;
             }
         }
@@ -73,6 +75,7 @@ class DeleteAllUsers extends Command
         } catch (\Exception $e) {
             DB::rollBack();
             $this->error('❌ Erro ao excluir usuários: ' . $e->getMessage());
+
             return 1;
         }
 

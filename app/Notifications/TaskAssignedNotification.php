@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
 class TaskAssignedNotification extends Notification implements ShouldQueue
@@ -44,7 +43,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         // Usar nosso template que funciona
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("Task Force • Nova Tarefa Atribuída: {$this->task->title}")
             ->view('emails.taskforce.notification', [
                 'subject' => "Task Force • Nova Tarefa Atribuída: {$this->task->title}",
@@ -54,7 +53,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
                 'highlights' => [
                     "✨ {$this->task->title}",
                     "📊 Status: " . ucfirst($this->task->status),
-                    "🎯 Prioridade: " . ucfirst($this->task->priority)
+                    "🎯 Prioridade: " . ucfirst($this->task->priority),
                 ],
                 'infoItems' => [
                     'Atribuída por' => $this->assignedBy->name,
@@ -62,13 +61,13 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
                     'Referência' => "#TF-{$this->task->id}",
                     'Data de Criação' => $this->task->created_at->format('d/m/Y H:i'),
                     'Prioridade' => ucfirst($this->task->priority),
-                    'Status' => ucfirst($this->task->status)
+                    'Status' => ucfirst($this->task->status),
                 ],
                 'ctaUrl' => 'http://localhost:8001/pt/tasks/' . $this->task->id,
                 'ctaLabel' => 'Visualizar Tarefa',
                 'note' => 'Esta é uma notificação automática do sistema Task Force.',
                 'logoUrl' => 'https://via.placeholder.com/40x40/ffffff/4f46e5?text=TF',
-                'preheader' => "Nova tarefa atribuída: {$this->task->title}"
+                'preheader' => "Nova tarefa atribuída: {$this->task->title}",
             ]);
     }
 
@@ -79,7 +78,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
         $priorityColor = $this->getPriorityColor($this->task->priority);
         $statusColor = $this->getStatusColor($this->task->status);
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->greeting("📋 Olá {$this->assignedTo->name}!")
             ->subject("🎯 Nova Tarefa Atribuída: {$this->task->title}")
             ->line("**Uma nova tarefa foi atribuída a você!**")
@@ -136,7 +135,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
             'created_at' => now(),
         ];
     }
-    
+
     /**
      * Get priority color emoji
      */
@@ -149,7 +148,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
             default => '⚪'
         };
     }
-    
+
     /**
      * Get status color emoji
      */
@@ -163,4 +162,4 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
             default => '⚪'
         };
     }
-} 
+}

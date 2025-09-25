@@ -3,9 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Notification;
 
 class TestBroadcastNotification extends Notification implements ShouldBroadcast
 {
@@ -22,7 +22,7 @@ class TestBroadcastNotification extends Notification implements ShouldBroadcast
     {
         return new BroadcastMessage([
             'title' => 'Hello WS',
-            'time'  => now()->toIso8601String(),
+            'time' => now()->toIso8601String(),
             'message' => 'Teste de notificação WebSocket funcionando!',
         ]);
     }

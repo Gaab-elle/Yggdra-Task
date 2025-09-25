@@ -3,9 +3,9 @@
 namespace App\Notifications;
 
 use App\Mail\TaskCommentAddedMail;
+use App\Models\Comment;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Comment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;

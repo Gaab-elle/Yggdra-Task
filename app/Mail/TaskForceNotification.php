@@ -8,7 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskForceNotification extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public function __construct(
         public string $subjectLine,
@@ -21,23 +22,24 @@ class TaskForceNotification extends Mailable
         public ?string $note = null,
         public ?string $logoUrl = null,
         public ?string $preheader = null,
-    ) {}
+    ) {
+    }
 
     public function build()
     {
         return $this->subject($this->subjectLine)
             ->view('emails.taskforce.notification')
             ->with([
-                'subject'    => $this->subjectLine,
-                'title'      => $this->title,
-                'intro'      => $this->intro,
+                'subject' => $this->subjectLine,
+                'title' => $this->title,
+                'intro' => $this->intro,
                 'highlights' => $this->highlights,
-                'infoItems'  => $this->infoItems,
-                'ctaUrl'     => $this->ctaUrl,
-                'ctaLabel'   => $this->ctaLabel,
-                'note'       => $this->note,
-                'logoUrl'    => $this->logoUrl,
-                'preheader'  => $this->preheader,
+                'infoItems' => $this->infoItems,
+                'ctaUrl' => $this->ctaUrl,
+                'ctaLabel' => $this->ctaLabel,
+                'note' => $this->note,
+                'logoUrl' => $this->logoUrl,
+                'preheader' => $this->preheader,
             ]);
     }
 }

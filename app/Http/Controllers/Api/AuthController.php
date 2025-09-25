@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -23,7 +22,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['As credenciais fornecidas estão incorretas.'],
             ]);
@@ -35,7 +34,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-            'message' => 'Login realizado com sucesso!'
+            'message' => 'Login realizado com sucesso!',
         ]);
     }
 
@@ -47,7 +46,7 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'Logout realizado com sucesso!'
+            'message' => 'Logout realizado com sucesso!',
         ]);
     }
 
@@ -57,7 +56,7 @@ class AuthController extends Controller
     public function user(Request $request)
     {
         return response()->json([
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
@@ -85,7 +84,7 @@ class AuthController extends Controller
             // Log do erro, mas não falha o registro
             \Log::error('Erro ao enviar notificação de cadastro via API', [
                 'user_id' => $user->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
 
@@ -94,7 +93,7 @@ class AuthController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
-            'message' => 'Usuário criado com sucesso!'
+            'message' => 'Usuário criado com sucesso!',
         ], 201);
     }
 
@@ -106,7 +105,7 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Todos os tokens foram revogados!'
+            'message' => 'Todos os tokens foram revogados!',
         ]);
     }
 }

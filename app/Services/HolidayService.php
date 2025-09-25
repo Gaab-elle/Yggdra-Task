@@ -5,8 +5,6 @@ namespace App\Services;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class HolidayService
 {
@@ -32,8 +30,9 @@ class HolidayService
             Log::error('Erro ao verificar feriado específico', [
                 'error' => $e->getMessage(),
                 'date' => $date->format('Y-m-d'),
-                'state' => $state
+                'state' => $state,
             ]);
+
             return null;
         }
     }
@@ -68,13 +67,14 @@ class HolidayService
                 if ($response->successful()) {
                     $data = $response->json();
                     $apiHolidays = $data['holidays'] ?? [];
+
                     // Combinar feriados nacionais com os da API
                     return array_merge($nationalHolidays, $apiHolidays);
                 }
 
                 Log::warning('Falha ao obter feriados da API, usando feriados nacionais', [
                     'status' => $response->status(),
-                    'response' => $response->body()
+                    'response' => $response->body(),
                 ]);
 
                 return $nationalHolidays;
@@ -82,7 +82,7 @@ class HolidayService
                 Log::warning('Erro ao consultar API de feriados, usando feriados nacionais', [
                     'error' => $e->getMessage(),
                     'year' => $year,
-                    'state' => $state
+                    'state' => $state,
                 ]);
 
                 return $nationalHolidays;

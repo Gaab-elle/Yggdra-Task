@@ -11,7 +11,8 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -52,12 +53,12 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Task::class, 'created_by');
     }
-    
+
     public function assignedTasks()
     {
         return $this->hasMany(Task::class, 'assigned_to');
     }
-    
+
     /**
      * Route notifications for the mail channel.
      *

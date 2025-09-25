@@ -52,7 +52,7 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
             'user_name' => $this->user->name,
             'user_email' => $this->user->email,
             'type' => 'user_registered',
-            'message' => 'Bem-vindo ao Task Force! Seu cadastro foi realizado com sucesso.'
+            'message' => 'Bem-vindo ao Task Force! Seu cadastro foi realizado com sucesso.',
         ];
     }
 }

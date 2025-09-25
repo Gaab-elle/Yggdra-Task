@@ -4,9 +4,7 @@ namespace App\Events;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -14,7 +12,9 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskDelegated implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $task;
     public $delegatedBy;
@@ -28,11 +28,11 @@ class TaskDelegated implements ShouldBroadcast
         $this->task = $task;
         $this->delegatedBy = $delegatedBy;
         $this->delegatedTo = $delegatedTo;
-        
+
         \Log::info('🎯 TaskDelegated event constructor called', [
             'task_id' => $task->id,
             'delegated_by' => $delegatedBy->id,
-            'delegated_to' => $delegatedTo->id
+            'delegated_to' => $delegatedTo->id,
         ]);
     }
 
@@ -46,11 +46,11 @@ class TaskDelegated implements ShouldBroadcast
         $channels = [
             new PrivateChannel('user.' . $this->delegatedTo->id),
         ];
-        
+
         \Log::info('🎯 TaskDelegated broadcastOn called', [
-            'channels' => array_map(fn($channel) => $channel->name, $channels),
+            'channels' => array_map(fn ($channel) => $channel->name, $channels),
             'task_id' => $this->task->id,
-            'delegated_to' => $this->delegatedTo->id
+            'delegated_to' => $this->delegatedTo->id,
         ]);
 
         return $channels;
@@ -97,4 +97,4 @@ class TaskDelegated implements ShouldBroadcast
     {
         return 'task.delegated';
     }
-} 
+}

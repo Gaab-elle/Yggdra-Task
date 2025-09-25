@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Events\UserOnlineStatus;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
-use App\Models\User;
-use App\Events\UserOnlineStatus;
 
 class CleanOfflineUsers extends Command
 {
@@ -29,26 +29,27 @@ class CleanOfflineUsers extends Command
     public function handle()
     {
         $this->info('🧹 Limpando usuários offline...');
-        
+
         $users = User::all();
         $offlineUsers = [];
-        
+
         foreach ($users as $user) {
             $cacheKey = "user_online_{$user->id}";
-            
+
             // Se o cache expirou, o usuário está offline
-            if (!Cache::has($cacheKey)) {
+            if (! Cache::has($cacheKey)) {
                 $offlineUsers[] = $user;
             }
         }
-        
+
         if (empty($offlineUsers)) {
             $this->info('✅ Todos os usuários estão online');
+
             return;
         }
-        
+
         $this->info("📤 Disparando eventos de status offline para " . count($offlineUsers) . " usuários...");
-        
+
         foreach ($offlineUsers as $user) {
             try {
                 event(new UserOnlineStatus($user, 'offline'));
@@ -57,7 +58,7 @@ class CleanOfflineUsers extends Command
                 $this->error("❌ Erro ao disparar evento para {$user->name}: " . $e->getMessage());
             }
         }
-        
+
         $this->info('✅ Limpeza de usuários offline concluída');
     }
 }

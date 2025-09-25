@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 
 class TaskComment extends Model
 {
@@ -15,7 +15,7 @@ class TaskComment extends Model
         'user_id',
         'content',
         'mentions',
-        'is_pinned'
+        'is_pinned',
     ];
 
     protected $casts = [
@@ -48,7 +48,7 @@ class TaskComment extends Model
     public function getFormattedContentAttribute()
     {
         $content = $this->content;
-        
+
         // Processar menções
         if ($this->mentions) {
             foreach ($this->mentions as $userId) {
@@ -62,17 +62,17 @@ class TaskComment extends Model
                 }
             }
         }
-        
+
         // Processar links
         $content = preg_replace(
             '/(https?:\/\/[^\s]+)/',
             '<a href="$1" target="_blank" class="text-blue-600 hover:underline">$1</a>',
             $content
         );
-        
+
         // Processar quebras de linha
         $content = nl2br($content);
-        
+
         return $content;
     }
 
@@ -110,14 +110,15 @@ class TaskComment extends Model
     // Métodos
     public function togglePin()
     {
-        $this->update(['is_pinned' => !$this->is_pinned]);
+        $this->update(['is_pinned' => ! $this->is_pinned]);
+
         return $this->is_pinned;
     }
 
     public function addMention($userId)
     {
         $mentions = $this->mentions ?? [];
-        if (!in_array($userId, $mentions)) {
+        if (! in_array($userId, $mentions)) {
             $mentions[] = $userId;
             $this->update(['mentions' => $mentions]);
         }
