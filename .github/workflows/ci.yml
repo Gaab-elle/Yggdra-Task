@@ -39,7 +39,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20.19'
         cache: 'npm'
     
     - name: Install Composer dependencies
@@ -48,6 +48,7 @@ jobs:
     - name: Install NPM dependencies
       run: |
         npm cache clean --force
+        rm -rf node_modules package-lock.json
         npm install
     
     - name: Copy environment file
@@ -118,13 +119,14 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20.19'
         cache: 'npm'
     
     - name: Install dependencies
       run: |
         composer install --prefer-dist --no-interaction --no-dev --optimize-autoloader
         npm cache clean --force
+        rm -rf node_modules package-lock.json
         npm install
     
     - name: Build for production
