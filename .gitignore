@@ -66,8 +66,8 @@ composer.phar
 composer.lock
 
 # NPM
-package-lock.json
-yarn.lock
+# package-lock.json - necessário para CI/CD
+# yarn.lock - necessário para CI/CD
 
 # Laravel specific
 .env.local
